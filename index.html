@@ -1,10 +1,279 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Treasury Mentor</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Treasury Mentor</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&family=Inter:wght@400;500;600&display=swap');
+
+  :root {
+    --black: #0A0A0A;
+    --white: #FFFFFF;
+    --teal: #4CABC4;
+    --gray: #666666;
+    --line: #EAEAEA;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    background: var(--white);
+    color: var(--black);
+    font-family: 'Inter', sans-serif;
+  }
+
+  body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+
+  header {
+    padding: 32px 8%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .wordmark {
+    font-family: 'Archivo', sans-serif;
+    font-weight: 800;
+    font-size: 0.95rem;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+  }
+
+  .wordmark span { color: var(--teal); }
+
+  nav {
+    display: flex;
+    gap: 28px;
+  }
+
+  nav a {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--black);
+    text-decoration: none;
+    border-bottom: 2px solid transparent;
+    padding-bottom: 2px;
+    transition: border-color 0.2s ease, color 0.2s ease;
+  }
+
+  nav a:hover {
+    color: var(--teal);
+    border-color: var(--teal);
+  }
+
+  main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 72px 8% 40px;
+  }
+
+  .logo {
+    width: 148px;
+    height: 148px;
+    border-radius: 50%;
+    margin-bottom: 40px;
+    opacity: 0;
+    animation: fadeUp 0.7s ease-out 0.05s forwards;
+  }
+
+  .eyebrow {
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--teal);
+    margin-bottom: 18px;
+    opacity: 0;
+    animation: fadeUp 0.7s ease-out 0.15s forwards;
+  }
+
+  h1 {
+    font-family: 'Archivo', sans-serif;
+    font-weight: 800;
+    font-size: clamp(2rem, 5vw, 3.4rem);
+    line-height: 1.08;
+    letter-spacing: -0.01em;
+    max-width: 16ch;
+    opacity: 0;
+    animation: fadeUp 0.7s ease-out 0.25s forwards;
+  }
+
+  h1 .accent { color: var(--teal); }
+
+  .lede {
+    margin-top: 22px;
+    font-size: 1.08rem;
+    line-height: 1.65;
+    color: var(--gray);
+    max-width: 52ch;
+    opacity: 0;
+    animation: fadeUp 0.7s ease-out 0.35s forwards;
+  }
+
+  .points {
+    margin-top: 64px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+    max-width: 920px;
+    width: 100%;
+    text-align: left;
+    opacity: 0;
+    animation: fadeUp 0.7s ease-out 0.45s forwards;
+  }
+
+  .point {
+    padding: 28px 24px;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+  }
+
+  .arrow {
+    font-family: 'Archivo', sans-serif;
+    font-weight: 800;
+    color: var(--teal);
+    font-size: 1.2rem;
+    display: block;
+    margin-bottom: 12px;
+  }
+
+  .point h3 {
+    font-family: 'Archivo', sans-serif;
+    font-weight: 700;
+    font-size: 1.05rem;
+    margin-bottom: 8px;
+  }
+
+  .point p {
+    font-size: 0.92rem;
+    line-height: 1.55;
+    color: var(--gray);
+  }
+
+  .cta-row {
+    margin-top: 56px;
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    justify-content: center;
+    opacity: 0;
+    animation: fadeUp 0.7s ease-out 0.55s forwards;
+  }
+
+  .btn {
+    font-family: 'Archivo', sans-serif;
+    font-weight: 700;
+    font-size: 0.88rem;
+    text-decoration: none;
+    padding: 14px 28px;
+    border-radius: 4px;
+    letter-spacing: 0.01em;
+    transition: transform 0.15s ease, opacity 0.15s ease;
+  }
+
+  .btn:hover { transform: translateY(-1px); }
+
+  .btn-primary {
+    background: var(--black);
+    color: var(--white);
+  }
+
+  .btn-secondary {
+    background: transparent;
+    color: var(--black);
+    border: 1px solid var(--black);
+  }
+
+  footer {
+    padding: 28px 8%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid var(--line);
+    font-size: 0.78rem;
+    color: var(--gray);
+  }
+
+  footer a {
+    color: var(--gray);
+    text-decoration: none;
+  }
+
+  footer a:hover { color: var(--teal); }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(14px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .logo, .eyebrow, h1, .lede, .points, .cta-row { animation: none; opacity: 1; }
+  }
+
+  @media (max-width: 720px) {
+    nav { display: none; }
+    .points { grid-template-columns: 1fr; }
+    main { padding: 56px 6% 40px; }
+  }
+</style>
 </head>
 <body>
-  <h1>Treasury Mentor</h1>
-  <p>Coming soon.</p>
+
+  <header>
+    <div class="wordmark">The <span>Treasury</span> Mentor</div>
+    <nav>
+      <a href="https://www.linkedin.com/company/the-treasury-mentor/" target="_blank" rel="noopener">LinkedIn</a>
+      <a href="#" target="_blank" rel="noopener">Substack</a>
+      <a href="mailto:hello@treasurymentor.com">Contact</a>
+    </nav>
+  </header>
+
+  <main>
+    <img class="logo" src="logo.jpg" alt="The Treasury Mentor">
+
+    <div class="eyebrow">Founded by a treasurer</div>
+    <h1>AI for treasury,<br>taught by someone <span class="accent">who runs it.</span></h1>
+    <p class="lede">
+      Practical AI skills for real finance work — covenant compliance, cash forecasting, reporting automation, working capital. The stuff that eats your week. Tested, proven, and built from inside an active treasury seat.
+    </p>
+
+    <div class="points">
+      <div class="point">
+        <span class="arrow">&rarr;</span>
+        <h3>Use cases, not hype</h3>
+        <p>Breakdowns of where AI actually saves hours in treasury — no theory, no buzzwords.</p>
+      </div>
+      <div class="point">
+        <span class="arrow">&rarr;</span>
+        <h3>Tools you can use</h3>
+        <p>Templates and frameworks built from real deployments, shared for anyone doing the work.</p>
+      </div>
+      <div class="point">
+        <span class="arrow">&rarr;</span>
+        <h3>Behind the build</h3>
+        <p>How the systems actually get built — the setup, the failures, and what shipped.</p>
+      </div>
+    </div>
+
+    <div class="cta-row">
+      <a class="btn btn-primary" href="https://www.linkedin.com/company/the-treasury-mentor/" target="_blank" rel="noopener">Follow on LinkedIn</a>
+      <a class="btn btn-secondary" href="mailto:hello@treasurymentor.com">Get in touch</a>
+    </div>
+  </main>
+
+  <footer>
+    <div>&copy; 2026 The Treasury Mentor</div>
+    <div><a href="mailto:hello@treasurymentor.com">hello@treasurymentor.com</a></div>
+  </footer>
+
 </body>
 </html>
