@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Build Your Own Finance Team</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Cormorant+Garamond:wght@500;600&display=swap');
+  :root{ --ink:#0E1116; --panel:#171B21; --line:#262B33; --teal:#4CABC4; --teal-deep:#2E7E93;
+    --cream:#F4F1EA; --grey:#8B94A0; --greyd:#5B636F; }
+  *{box-sizing:border-box;}
+  body{margin:0;background:#FFFFFF;color:#000;
+    font-family:'Archivo',-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased;}
+  .shell{max-width:1340px;margin:0 auto;padding:48px 24px 60px;}
+  .eyebrow{font-size:12px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:#4CABC4;margin-bottom:18px;}
+  h1{font-weight:800;font-size:clamp(34px,5.4vw,62px);line-height:1.0;letter-spacing:-.035em;margin:0 0 20px;max-width:15ch;}
+  h1 .t{color:#4CABC4;}
+  .lede{max-width:58ch;font-size:17px;line-height:1.6;color:#5A6470;margin:0;}
+  .lede strong{color:#000;font-weight:600;}
+  .marker{font-size:12px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:#000;border-top:3px solid #4CABC4;padding-top:14px;margin-top:30px;display:inline-block;}
+  .tallies{display:flex;flex-wrap:wrap;gap:34px;margin-top:26px;margin-bottom:36px;}
+  .tally .num{font-weight:800;font-size:34px;line-height:1;letter-spacing:-.03em;}
+  .tally .lbl{font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:#8B949E;margin-top:8px;}
+
+  .stage{display:grid;grid-template-columns:minmax(0,1fr) 344px;gap:16px;align-items:start;}
+  @media (max-width:980px){ .stage{grid-template-columns:1fr;} }
+
+  .canvas-shell{position:relative;height:740px;border:1px solid #1e232a;border-radius:10px;overflow:hidden;background:var(--ink);}
+  svg#nerve{display:block;width:100%;height:100%;}
+
+  .ring{fill:none;stroke:#1c2129;stroke-width:1;stroke-dasharray:1.5 6;}
+  .wm{font-family:'Cormorant Garamond',serif;font-weight:600;fill:#fff;opacity:.03;letter-spacing:.05em;pointer-events:none;transition:opacity .4s ease;}
+
+  .fiber{fill:none;transition:stroke-opacity .4s ease;}
+  .fiber-dot{fill:var(--teal);transition:opacity .4s ease;}
+  .soma{fill:var(--cream);stroke:var(--teal);stroke-width:3;}
+  .soma-icon{fill:none;stroke:var(--teal);stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;}
+
+  .dept-hit,.sub-hit,.task-hit{cursor:pointer;}
+  .dept-body{fill:var(--cream);transition:fill .25s ease;}
+  .dept-hit:hover .dept-body{fill:#fff;}
+  .dept-icon{fill:none;stroke:#12151a;stroke-width:1.3;stroke-linecap:round;stroke-linejoin:round;}
+  .dept-pill{fill:#000;transition:fill .2s ease;}
+  .dept-hit:hover .dept-pill{fill:var(--teal-deep);}
+  .dept-name{font-weight:800;font-size:12.5px;letter-spacing:.03em;fill:#fff;}
+  .dept-sub{font-size:9.5px;font-weight:600;fill:var(--grey);}
+
+  .sub-body{fill:var(--cream);stroke:var(--teal);stroke-width:2;transition:fill .2s ease;}
+  .sub-hit:hover .sub-body{fill:#fff;}
+  .sub-name{font-size:10px;font-weight:600;fill:#fff;pointer-events:none;opacity:0;transition:opacity .35s ease;}
+  .lvl-sub .sub-name,.lvl-task .sub-name{opacity:1;}
+
+  .bouton{fill:var(--cream);stroke:var(--teal);stroke-width:1;transition:fill .2s ease,stroke-width .2s ease;}
+  .task-hit:hover .bouton{fill:#fff;}
+  .task-hit.on .bouton{fill:var(--teal);stroke-width:2;}
+
+  .dimmed{opacity:.08;}
+  .halfdim{opacity:.28;}
+
+  .hintline{position:absolute;right:16px;bottom:14px;z-index:4;font-size:11px;font-weight:500;color:#4b525c;letter-spacing:.04em;pointer-events:none;}
+  #search{position:absolute;left:16px;top:14px;z-index:4;font-family:inherit;font-size:13px;background:rgba(255,255,255,.06);
+    color:#fff;border:1px solid #262b33;border-radius:5px;padding:9px 12px;width:220px;}
+  #search::placeholder{color:#5B636F;}
+  #search:focus-visible{outline:1.5px solid var(--teal);}
+  .crumbs{position:absolute;right:16px;top:14px;z-index:4;font-size:11.5px;font-weight:500;color:var(--grey);display:flex;align-items:center;gap:7px;flex-wrap:wrap;max-width:60%;justify-content:flex-end;}
+  .crumbs button{font:inherit;font-weight:700;color:var(--teal);background:none;border:none;padding:0;cursor:pointer;}
+  .crumbs button:hover{color:#fff;}
+  .crumbs .sep{color:#3a4048;}
+  .crumbs .now{color:#fff;font-weight:600;}
+
+  aside.inspector{background:#fff;border:1px solid #E6E9EC;border-radius:10px;padding:24px;min-height:440px;position:sticky;top:18px;}
+  .ins-kick{font-size:10.5px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:#2E7E93;margin-bottom:12px;}
+  .inspector h2{font-weight:800;font-size:22px;letter-spacing:-.03em;line-height:1.15;margin:0 0 14px;}
+  .inspector p{font-size:14px;line-height:1.6;color:#5A6470;margin:0 0 18px;}
+  .trail{font-size:12px;font-weight:500;color:#8B949E;margin-bottom:16px;}
+  .rows{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:5px;max-height:420px;overflow-y:auto;}
+  .rows li{display:flex;justify-content:space-between;gap:10px;align-items:center;font-size:13.5px;font-weight:500;padding:10px 12px;
+    border:1px solid #E6E9EC;border-left:3px solid #4CABC4;border-radius:4px;cursor:pointer;background:#fff;transition:background .15s ease;}
+  .rows li:hover{background:#F7FAFB;}
+  .rows li .n{font-size:11.5px;font-weight:600;color:#8B949E;}
+  .back-btn{font-family:inherit;font-size:12px;font-weight:700;background:none;border:none;color:#2E7E93;cursor:pointer;padding:0;margin-bottom:14px;}
+  .back-btn:hover{color:#000;}
+  .ins-foot{border-top:1px solid #E6E9EC;padding-top:14px;margin-top:18px;font-size:12px;color:#8B949E;line-height:1.55;}
+  .chips{display:flex;flex-wrap:wrap;gap:6px;}
+  .chip{font-size:12px;font-weight:500;padding:6px 9px;border:1px solid #E6E9EC;border-radius:4px;color:#5A6470;cursor:pointer;background:#fff;}
+  .chip:hover{border-color:#4CABC4;color:#000;}
+</style>
+</head>
+<body>
+
+
+<div class="shell">
+  <header>
+    <div class="eyebrow">The Treasury Mentor · Node Zero</div>
+    <h1>Build your own <span class="t">finance team</span></h1>
+    <p class="lede">You pay for the AI. You've written a few prompts. You still rebuild the covenant package by hand every quarter. <strong>The model was never the gap — nobody mapped the work.</strong> Click any node. It zooms in and opens.</p>
+    <div class="marker">One square = one task</div>
+    <div class="tallies">
+      <div class="tally"><div class="num" id="t-tasks">—</div><div class="lbl">tasks</div></div>
+      <div class="tally"><div class="num">8</div><div class="lbl">departments</div></div>
+      <div class="tally"><div class="num" id="t-branch">—</div><div class="lbl">branches</div></div>
+      <div class="tally"><div class="num">25</div><div class="lbl">context files</div></div>
+    </div>
+  </header>
+
+  <div class="stage">
+    <div class="canvas-shell">
+      <input id="search" type="search" placeholder="Search every task…" autocomplete="off">
+      <div class="crumbs" id="crumbs"></div>
+      <svg id="nerve" role="img" aria-label="A map of finance tasks branching from Node Zero into eight departments, each opening into branches, each opening into individual tasks.">
+        <g id="cam">
+          <g id="rings"></g>
+          <g id="wm"></g>
+          <g id="fibers"></g>
+          <g id="boutons"></g>
+          <g id="subnodes"></g>
+          <g id="deptnodes"></g>
+          <g id="core">
+            <circle class="soma" cx="0" cy="0" r="42"></circle>
+            <path class="soma-icon" d="M2 12 L6.2 7.6 L9.2 10 L14 3.6 M10.6 3.6 H14 V7" transform="translate(-9,-9) scale(1.3)"></path>
+          </g>
+        </g>
+      </svg>
+      <div class="hintline">click to go deeper · click the core to zoom back out</div>
+    </div>
+    <aside class="inspector" id="inspector" aria-live="polite"></aside>
+  </div>
+</div>
+
+<script>
+(function(){
+  function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+  var CAPS={ap:'AP',ar:'AR',kpi:'KPI',roi:'ROI',npv:'NPV',sox:'SOX',etr:'ETR',utp:'UTP',fx:'FX',var:'VaR',
+    je:'JE',bs:'BS',ic:'IC',dd:'DD',cim:'CIM',lbo:'LBO',qa:'Q&A',pbc:'PBC',cwip:'CWIP',tp:'TP',ppa:'PPA',
+    gaap:'GAAP',cbcr:'CbCR',idr:'IDR',kyc:'KYC',bu:'BU',gl:'GL',rec:'Rec',btax:'Book-to-Tax',dso:'DSO',
+    dpo:'DPO',tms:'TMS',ai:'AI',lc:'LC',rfp:'RFP'};
+  function pretty(raw){
+    var n = raw.replace(/\.md$/i,'').replace(/_1$/,'');
+    if (n.indexOf(' ') === -1) {
+      n = n.replace(/_/g,' / ').replace(/-/g,' ');
+      n = n.split(' ').filter(Boolean).map(function(w){
+        var lw=w.toLowerCase();
+        if (CAPS[lw]) return CAPS[lw];
+        return w.charAt(0).toUpperCase()+w.slice(1);
+      }).join(' ');
+    } else { n = n.replace(/_/g,' / '); }
+    return n;
+  }
+
+  var ICONS = [
+    'M2 12 L6.2 7.6 L9.2 10 L14 3.6 M10.6 3.6 H14 V7',
+    'M4.5 14 V3.5 H10 V14 M4.5 14H11.5 M6 6H6.4 M8.2 6H8.6 M6 8.6H6.4 M8.2 8.6H8.6 M6 11.2H6.4 M8.2 11.2H8.6 M11.5 9V14',
+    'M3 8.3 L6.2 11.3 L13 4.2',
+    'M4.5 2 H9.5 L12 4.5 V14 H4.5 Z M9.5 2 V4.5 H12',
+    'M2.5 3.5 H13.5 V10.2 H6.7 L4.2 12.6 V10.2 H2.5 Z',
+    'M3 12.6 L3.6 10.1 L10.4 3.3 A1.15 1.15 0 0112 5 L5.2 11.8 Z',
+    'M7.2 11a3.8 3.8 0 100-7.6 3.8 3.8 0 000 7.6z M9.9 9.9 L13.3 13.3',
+    'M8 2 L12.7 4 V8.1 C12.7 11.4 10.6 13.1 8 13.9 C5.4 13.1 3.3 11.4 3.3 8.1 V4 Z',
+    'M8 4.6 V8 L10.2 9.4 M8 14a6 6 0 100-12 6 6 0 000 12z',
+    'M8 2.3 L14 5.5 L8 8.7 L2 5.5 Z M2 8.3 L8 11.5 L14 8.3 M2 11 L8 14.2 L14 11'
+  ];
+
+  var RAW = [
+    { name:'Treasury', note:'Cash positioning, debt and covenant work, and the forecast engine the rest of the map leans on.', subs:[
+      {name:'Cash Management', files:['bank-account-management','bank-fee-analysis','bank-statement-reconciliation','cash-concentration-sweeps','cash-reporting','daily-cash-positioning','excess-cash-investment','intercompany-funding-pooling-structure-designer','kyc-bank-onboarding','trapped-cash-repatriation-analyzer']},
+      {name:'Debt & Capital Markets', files:['capital-structure-strategy','covenant-compliance','debt-issuance-refinancing','facility-maturity-management','lender-reporting','rating-agency-support']},
+      {name:'Working Capital', files:['ap-payment-timing','ar-monitoring-collections','cash-conversion-cycle-analytics','dpo-optimizer','dso-driver-analyzer','intercompany-reconciliation-settlement','net-working-capital-target-setter','receivables-financing-analyzer','seasonal-working-capital-planner','supply-chain-finance-program-manager','working-capital-benchmark-analyzer','working-capital-bridge','working-capital-forecaster','working-capital-initiative-tracker']},
+      {name:'Forecasting', files:['balance-sheet-forecast','cash-flow-13-week','cash-flow-52-week','cash-flow-statement-indirect','debt-revolver-schedule','forecast-accuracy-tracking','forecast-consolidation','forward-covenant-testing','scenario-sensitivity-forecasting','weekly-income-statement','weekly-rollforward']},
+      {name:'Cash Investment Policy & Portfolio Management', files:['eligible-instrument-screener','investment-policy-compliance-tester','investment-policy-exception-approver','investment-reporting-package-builder','issuer-credit-monitor','maturity-ladder-manager','portfolio-construction-modeler','portfolio-performance-tracker','portfolio-risk-aggregator','yield-optimization-analyzer']},
+      {name:'Payment Controls', files:['bank-file-reconciler','check-fraud-monitor','duplicate-payment-screener','fraud-incident-responder','payment-approval-router','payment-exception-escalator','payment-file-validator','payment-timing-optimizer','positive-pay-exception-reviewer','wire-fraud-detector']},
+      {name:'Financial Risk Management', files:['commodity-risk','credit-risk-counterparty-monitoring','fx-exposure-var','hedge-execution','interest-rate-risk']},
+      {name:'Insurance', files:['certificate-of-insurance-management','claims-tracking','coverage-gap-analysis','insurance-program-management','insurance-renewal-support']},
+      {name:'Corporate Actions Support', files:['buyback-compliance-monitor','buyback-execution-tracker','dividend-payment-administrator','drip-program-administrator']},
+      {name:'Bank Relationship Management', files:['bank-relationship-reviewer','bank-service-level-monitor','bank-wallet-share-analyzer']},
+      {name:'Payment Program Optimization', files:['corporate-card-program-administrator','integrated-payables-rebate-modeler','payment-method-migration-analyzer']},
+      {name:'Pension Treasury Oversight', files:['pension-asset-liability-monitor','pension-contribution-planner','pension-funding-status-monitor']},
+      {name:'TMS', files:['tms-access-administrator','tms-data-integrity-monitor','tms-evaluation-selection-framework','tms-requirements-definition','tms-workflow-configurator']},
+      {name:'Trade Finance & LC', files:['letter-of-credit-tracker','trade-finance-facility-manager']},
+      {name:'Bank RFP & Selection', files:['bank-rfp-manager']},
+      {name:'Treasury Technology & AI Adoption Roadmap', files:['treasury-technology-ai-adoption-roadmap-builder']}
+    ]},
+    { name:'Controllership & Accounting', note:'Books what everyone else computes — the actuals backbone every downstream task reads from.', subs:[
+      {name:'Financial Close', files:['accrual-calculator','accrual-reversal-tracker','accrual-trender','close-calendar-manager','close-flux-detector','close-package-builder','close-readiness-checker','close-status-tracker','flux-root-tracer','je-approval-router','je-drafter','je-support-matcher']},
+      {name:'Financial Reporting', files:['audit-query-responder','audit-support-puller','basis-difference-tracker','consolidation-engine','currency-translator','disclosure-checklist-runner','entity-statement-builder','filing-package-assembler','filing-tie-out','gaap-stat-bridge','intercompany-eliminator','note-drafter','pbc-manager','statement-builder','statement-validator']},
+      {name:'Technical Accounting', files:['adoption-planner','contract-analyzer','hedge-doc-preparer','hedge-effectiveness-tester','hedge-je-support','memo-drafter','memo-researcher','opening-balance-builder','ppa-modeler','rev-rec-applier','rev-rec-flagger','standard-change-assessor']},
+      {name:'Reconciliations', files:['bank-subledger-rec-builder','bs-rec-builder','intercompany-dispute-resolver','intercompany-matcher','open-item-ager','rec-auto-certifier','rec-exception-escalator','rec-package-assembler','rec-risk-scorer','rec-trend-monitor']},
+      {name:'Shared Services', files:['ap-exception-handler','cash-applier','duplicate-detector','expense-router','expense-validator','invoice-capturer','invoice-generator','master-data-validator','three-way-matcher','unapplied-resolver']},
+      {name:'Fixed Assets & Lease Accounting', files:['asset-register-manager','capex-vs-opex-classifier','cwip-tracker','depreciation-calculator','impairment-tester','lease-classifier','lease-liability-calculator','lease-modification-tracker']}
+    ]},
+    { name:'Tax', note:'Book-to-tax, provision, and transfer pricing — computes the numbers Controllership then books.', subs:[
+      {name:'Tax Provision & Reporting', files:['current-provision-calculator','deferred-disclosure-builder','deferred-provision-calculator','deferred-rollforward','etr-builder','etr-driver-explainer','provision-consolidator','rate-recon-disclosure-builder','tax-disclosure-tie-out','tax-footnote-drafter','utp-identifier','utp-measurer','valuation-allowance-assessor']},
+      {name:'Direct Tax', files:['btax-workpaper-builder','estimate-calculator','filing-status-tracker','jurisdiction-nexus-monitor','permanent-diff-identifier','return-form-populator','return-workpaper-assembler','safe-harbor-tester','tax-calendar-manager','taxable-income-builder','temporary-diff-calculator']},
+      {name:'Indirect Tax', files:['cert-expiry-monitor','cert-validator','indirect-gl-reconciler','indirect-return-preparer','indirect-variance-explainer','mistax-flagger','multi-jurisdiction-filer','rate-applier','taxability-determiner']},
+      {name:'Tax Planning & Research', files:['change-implementation-planner','impact-assessor','legislation-monitor','planning-risk-scorer','planning-scenario-modeler','position-support-drafter','structuring-optimizer','tax-researcher']},
+      {name:'Transfer Pricing', files:['cbcr-assembler','comparables-assembler','local-file-builder','margin-analyzer','master-file-builder','tp-adjustment-calculator','tp-deviation-flagger','tp-margin-monitor']},
+      {name:'Tax Accounts & Operations', files:['audit-exposure-tracker','audit-idr-manager','audit-support-assembler','notice-responder','notice-triage','tax-account-reconciler','tax-payment-tracker']}
+    ]},
+    { name:'Commercial Finance', note:'Cost, margin, and pricing analysis that feeds forecast assumptions and strategic business cases.', subs:[
+      {name:'Sales & Commercial Analysis', files:['Commission Accrual Support','Commission Modeler','Discount Analyzer','Incentive Alignment Tester','Net Revenue Realization Tracker','Pipeline Economics Analyzer','Rebate Program Modeler','Revenue Bridge Builder','Win-Loss Margin Analyzer']},
+      {name:'Standard Costing & Variance', files:['Cost Roll Processor','Inventory Analyzer','Purchase Price Variance Analyzer','Standard Cost Builder','Standard Review Flagger','Usage_Efficiency Variance Analyzer','Variance Explainer','Volume_Mix Variance Analyzer','Working Capital Tie']},
+      {name:'Pricing & Profitability', files:['Deal Profitability Evaluator','Elasticity Informer','Margin Alert Generator','Margin Leakage Detector','Price Realization Tracker','Price_Margin Analyzer','Quote Guardrail Checker','Realized Margin Monitor']},
+      {name:'Cost & Margin Analysis', files:['breakeven-modeler','contribution-calculator','cost-benchmark-analyzer','cost-driver-decomposer','cost-to-serve-modeler','margin-erosion-tracer','profitability-calculator','profitability-ranker']},
+      {name:'Operational Capex & Investment', files:['Asset Utilization Analyzer','Capex Benefit Realization','Capex Justification Builder','Capex Spend Tracker','Equipment ROI Modeler','Make-vs-Buy Modeler']},
+      {name:'Business Partnering', files:['BU Performance Packager','Operational Decision Modeler','Operational KPI Linker','Performance Narrative Writer','Tradeoff Quantifier']},
+      {name:'Customer & Contract Economics', files:['Contract Profitability Analyzer','Customer Lifetime Value Modeler']}
+    ]},
+    { name:'Strategic Finance', note:'Valuation, deal modeling, and capital allocation built for board-level decisions.', subs:[
+      {name:'Portfolio Review + Strategic Restructuring', files:['Carveout Modeler','Divestiture Screener','Portfolio Analyzer','Portfolio Scenario Modeler','Restructuring Analyzer','Turnaround Case Builder']},
+      {name:'Target Screening + Valuation & Deal Modeling', files:['LBO Accretion Modeler','Market Mapper','Synergy Modeler','Target Profiler','Target Screener','Valuation Modeler']},
+      {name:'Board & Strategic Communication', files:['Board QA Anticipator','Board Strategy Deck Builder','Decision Brief Writer','Sponsor Report Builder','Value Creation Tracker']},
+      {name:'Decision Support Models + Post-Investment Review', files:['Decision Modeler','Decision Tradeoff Analyzer','Lessons Capturer','Post-Investment Analyzer','Recommendation Builder']},
+      {name:'Due Diligence Support + Deal Materials', files:['CIM Analyzer','DD Financial Analyzer','DD Red Flag Flagger','DD Request Tracker','IC Memo Builder']},
+      {name:'Distressed Target Analysis', files:['Capital Structure Analyzer','Distressed Screener','Recovery Waterfall Modeler','Restructuring Angle Modeler']},
+      {name:'Corporate Development : Capital Allocation', files:['Allocation Scenario Comparator','Buy-Build Modeler','Capital Allocation Modeler','Option Sensitivity Tester']},
+      {name:'Business Case Development', files:['Assumption Validator','Business Case Builder','Case Risk Assessor']},
+      {name:'Project & Investment Appraisal', files:['Appraisal Modeler','Hurdle Ranker','Sensitivity Scenario Runner']},
+      {name:'Integration Planning', files:['Integration Planner','Synergy Tracker']}
+    ]},
+    { name:'FP&A', note:'Owns the P&L forecast and management reporting that the treasury liquidity forecast builds on top of.', subs:[
+      {name:'FP&A Forecasting', files:['actual-budget-forecast-comparator','forecast-accuracy-bias-analyzer','forecast-accuracy-bias-tracking','reforecast','rolling-forecast']},
+      {name:'Planning & Budgeting', files:['annual-operating-plan-build','budget-consolidation','capex-planning','long-range-planning','target-setting-guidance']},
+      {name:'Management Reporting', files:['dashboard-refresher','data-assembler','kpi-calculator','package-builder']},
+      {name:'Cost Allocation', files:['allocation-reporting-dispute-support','allocation-setup-execution','intercompany-cost-recovery']},
+      {name:'Data Integrity & Reporting Foundation', files:['data-validation-reconciliation','reporting-data-preparation']},
+      {name:'Data Integrity', files:['data-quality-validator','source-system-reconciler']},
+      {name:'Variance & Performance', files:['performance-commentary-builder','variance-driver-analyzer']}
+    ]},
+    { name:'Internal Audit', note:'Controls testing and continuous monitoring that checks every other branch of the map.', subs:[
+      {name:'Continuous Controls Monitoring', files:['anomaly-surfacer','audit-report-drafter','control-monitor','duplicate-conflict-detector','finding-documenter','fraud-risk-scorer','remediation-tracker','transaction-anomaly-detector','workpaper-builder']},
+      {name:'Risk Assessment, Controls Testing, SOX Support', files:['audit-plan-builder','control-matrix-manager','control-test-executor','deficiency-aggregator','exception-evaluator','risk-register-manager','risk-scorer','sample-selector','sox-test-tracker']}
+    ]},
+    { name:'Investor Relations', note:'Earnings materials and disclosure — consistent with, but distinct from, the notes Controllership owns.', subs:[
+      {name:'Shareholder Analysis + Disclosure & Messaging Support', files:['Disclosure Consistency Reviewer','Holder Change Analyzer','Messaging Consistency Checker','Ownership Tracker']},
+      {name:'Earnings Materials', files:['earnings-deck-builder','earnings-fact-checker','earnings-release-drafter','earnings-script-writer']},
+      {name:'Earnings Call Prep & Transcript Analysis', files:['Own Call Analyzer','Peer Call Analyzer','QA Prep Builder']},
+      {name:'Investor Q&A & Briefing Prep', files:['Briefing Note Builder','Investor Profile Builder','Talking Points Generator']},
+      {name:'Peer & Market Monitoring', files:['Analyst Coverage Monitor','Market Development Summarizer','Peer Performance Tracker']}
+    ]}
+  ];
+
+  var DEPTS = RAW.map(function(d,i){
+    var subs = d.subs.map(function(s){ return {name:s.name, tasks:s.files.map(pretty)}; });
+    var count = subs.reduce(function(a,s){return a+s.tasks.length;},0);
+    return {name:d.name, note:d.note, subs:subs, count:count, icon:ICONS[i%ICONS.length]};
+  });
+  var TOTAL = DEPTS.reduce(function(a,d){return a+d.count;},0);
+  var BRANCHES = DEPTS.reduce(function(a,d){return a+d.subs.length;},0);
+  document.getElementById('t-tasks').textContent = TOTAL;
+  document.getElementById('t-branch').textContent = BRANCHES;
+
+  // ---------- geometry (full 360, span proportional to task count) ----------
+  var GAP = 5;
+  var usable = 360 - GAP*DEPTS.length;
+  var R_D = 230, R_S = 420, R_T0 = 560, R_TSTEP = 34;
+  var cur = -90 - GAP/2;
+  DEPTS.forEach(function(d){
+    d.a0 = cur + GAP/2; d.span = (d.count/TOTAL)*usable; d.a1 = d.a0+d.span; d.mid=(d.a0+d.a1)/2;
+    cur = d.a1 + GAP/2;
+    var sc = d.a0;
+    d.subs.forEach(function(s){
+      var w = (Math.max(s.tasks.length,1)/d.count)*d.span;
+      s.a0=sc; s.a1=sc+w; s.mid=sc+w/2; sc+=w; s.dept=d;
+    });
+  });
+
+  function pol(r,a){ var t=a*Math.PI/180; return {x:r*Math.cos(t), y:r*Math.sin(t)}; }
+  function fiber(r1,a1,r2,a2,wob){
+    var p1=pol(r1,a1), p2=pol(r2,a2), m=(r1+r2)/2;
+    var c1=pol(m*0.9, a1+(wob||0)), c2=pol(m*1.1, a2-(wob||0)*0.6);
+    return 'M'+p1.x.toFixed(1)+','+p1.y.toFixed(1)+'C'+c1.x.toFixed(1)+','+c1.y.toFixed(1)+' '+c2.x.toFixed(1)+','+c2.y.toFixed(1)+' '+p2.x.toFixed(1)+','+p2.y.toFixed(1);
+  }
+
+  var NS='http://www.w3.org/2000/svg';
+  function mk(t,a){ var e=document.createElementNS(NS,t); for(var k in a) e.setAttribute(k,a[k]); return e; }
+
+  var gR=document.getElementById('rings'), gWM=document.getElementById('wm'), gF=document.getElementById('fibers'),
+      gB=document.getElementById('boutons'), gS=document.getElementById('subnodes'), gD=document.getElementById('deptnodes');
+
+  [R_D,R_S,R_T0].forEach(function(r){ gR.appendChild(mk('circle',{class:'ring',cx:0,cy:0,r:r})); });
+  var wmText = mk('text',{class:'wm',x:0,y:70,'text-anchor':'middle','font-size':170}); wmText.textContent='NODE ZERO'; gWM.appendChild(wmText);
+
+  var taskRecs=[], deptRecs=[], subRecs=[];
+
+  DEPTS.forEach(function(d,di){
+    var own=[], wob=(di%2?1:-1)*3;
+    var f0 = mk('path',{class:'fiber',d:fiber(42,d.mid,R_D-16,d.mid,wob),stroke:'#333b45','stroke-width':2.2,'stroke-opacity':.85,'stroke-linecap':'round'});
+    gF.appendChild(f0); own.push(f0);
+
+    d.subs.forEach(function(s,si){
+      var sw=(si%2?1:-1)*2.2;
+      var f1 = mk('path',{class:'fiber',d:fiber(R_D+16,d.mid,R_S,s.mid,sw),stroke:'#2a313b','stroke-width':1.5,'stroke-opacity':.7,'stroke-linecap':'round'});
+      gF.appendChild(f1); own.push(f1);
+      var dp1=pol(R_D+16,d.mid), sp1=pol(R_S,s.mid);
+      var dotT=0.62, dotX=dp1.x+(sp1.x-dp1.x)*dotT, dotY=dp1.y+(sp1.y-dp1.y)*dotT;
+      var fd1 = mk('circle',{class:'fiber-dot',cx:dotX.toFixed(1),cy:dotY.toFixed(1),r:2.3}); gF.appendChild(fd1); own.push(fd1);
+
+      var sp = pol(R_S, s.mid);
+      var sg = mk('g',{class:'sub-hit',tabindex:'0',role:'button','aria-label':s.name+', '+s.tasks.length+' tasks'});
+      sg.appendChild(mk('circle',{class:'sub-body',cx:sp.x.toFixed(1),cy:sp.y.toFixed(1),r:6}));
+      var right = Math.cos(s.mid*Math.PI/180) >= -0.02;
+      var sn = mk('text',{class:'sub-name',x:(sp.x+(right?11:-11)).toFixed(1),y:(sp.y-9).toFixed(1),'text-anchor':right?'start':'end'});
+      sn.textContent = s.name;
+      sg.appendChild(sn);
+      var tt = mk('title',{}); tt.textContent = s.name+' — '+s.tasks.length+' tasks'; sg.appendChild(tt);
+      gS.appendChild(sg); own.push(sg);
+      subRecs.push({el:sg, dept:d, sub:s});
+
+      var n=s.tasks.length, per=Math.min(5,Math.max(2,Math.ceil(Math.sqrt(n*1.5))));
+      s.tasks.forEach(function(name,i){
+        var row=Math.floor(i/per), inRow=i%per, rowN=Math.min(per,n-row*per);
+        var r=R_T0+row*R_TSTEP;
+        var wedge=Math.max(s.a1-s.a0-0.5,0.7), step=wedge/rowN;
+        var a=s.a0+0.25+step*(inRow+0.5);
+        var p=pol(r,a);
+        var f2 = mk('path',{class:'fiber',d:fiber(R_S+7,s.mid,r-8,a,1),stroke:'#23282f','stroke-width':1,'stroke-opacity':.55,'stroke-linecap':'round'});
+        gF.appendChild(f2); own.push(f2);
+
+        var tg = mk('g',{class:'task-hit',role:'button','aria-label':name});
+        tg.appendChild(mk('rect',{class:'bouton',x:(p.x-5.5).toFixed(1),y:(p.y-5.5).toFixed(1),width:11,height:11,rx:2}));
+        var t2=mk('title',{}); t2.textContent=name+'  ·  '+s.name; tg.appendChild(t2);
+        gB.appendChild(tg); own.push(tg);
+
+        var rec={el:tg,name:name,dept:d,sub:s,x:p.x,y:p.y};
+        taskRecs.push(rec);
+        tg.addEventListener('click', function(e){ e.stopPropagation(); openTask(rec); });
+      });
+
+      sg.addEventListener('click', function(e){ e.stopPropagation(); openSub(d,s); });
+      sg.addEventListener('keydown', function(e){ if(e.key==='Enter'||e.key===' '){e.preventDefault();openSub(d,s);} });
+    });
+
+    var dp = pol(R_D, d.mid);
+    var dg = mk('g',{class:'dept-hit',tabindex:'0',role:'button','aria-label':d.name+', '+d.count+' tasks'});
+    dg.appendChild(mk('circle',{class:'dept-body',cx:dp.x.toFixed(1),cy:dp.y.toFixed(1),r:16,stroke:'#4CABC4','stroke-width':2}));
+    dg.appendChild(mk('path',{class:'dept-icon',d:d.icon,transform:'translate('+(dp.x-8).toFixed(1)+','+(dp.y-8).toFixed(1)+')'}));
+    var right = Math.cos(d.mid*Math.PI/180) >= 0;
+    var lx = dp.x + (right?27:-27);
+    var nm = mk('text',{class:'dept-name',x:lx.toFixed(1),y:(dp.y-1).toFixed(1),'text-anchor':right?'start':'end'});
+    nm.textContent = d.name.toUpperCase();
+    var sb = mk('text',{class:'dept-sub',x:lx.toFixed(1),y:(dp.y+13).toFixed(1),'text-anchor':right?'start':'end'});
+    sb.textContent = d.count+' tasks · '+d.subs.length+' branches';
+    dg.appendChild(nm); dg.appendChild(sb); gD.appendChild(dg);
+
+    var bb=nm.getBBox(), bb2=sb.getBBox();
+    var bx=Math.min(bb.x,bb2.x), by=Math.min(bb.y,bb2.y);
+    var bw=Math.max(bb.x+bb.width,bb2.x+bb2.width)-bx, bh=Math.max(bb.y+bb.height,bb2.y+bb2.height)-by;
+    var padX=9,padY=6;
+    var pill = mk('rect',{class:'dept-pill',x:(bx-padX).toFixed(1),y:(by-padY).toFixed(1),width:(bw+padX*2).toFixed(1),height:(bh+padY*2).toFixed(1),rx:(bh/2+padY).toFixed(1)});
+    dg.insertBefore(pill, nm);
+
+    deptRecs.push({el:dg, dept:d, own:own});
+    dg.addEventListener('click', function(e){ e.stopPropagation(); openDept(d); });
+    dg.addEventListener('keydown', function(e){ if(e.key==='Enter'||e.key===' '){e.preventDefault();openDept(d);} });
+  });
+
+  // ---------- camera: slow, continuous, click-driven ----------
+  var svg=document.getElementById('nerve'), cam=document.getElementById('cam');
+  var view={x:0,y:0,k:0.5}, target=null, raf=null;
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function apply(){ cam.setAttribute('transform','translate('+view.x+','+view.y+') scale('+view.k+')'); }
+  function box(){ return svg.getBoundingClientRect(); }
+  function fitScale(){ var r=box(); return Math.max(0.24, Math.min(r.width,r.height)/1380); }
+
+  function easeTo(cx,cy,k){
+    var r=box();
+    var nx=r.width/2 - cx*k, ny=r.height/2 - cy*k;
+    if (reduce){ view.x=nx; view.y=ny; view.k=k; apply(); return; }
+    target={x:nx,y:ny,k:k};
+    if (raf) return;
+    var step=function(){
+      var dx=target.x-view.x, dy=target.y-view.y, dk=target.k-view.k;
+      view.x += dx*0.055; view.y += dy*0.055; view.k += dk*0.055;
+      apply();
+      if (Math.abs(dx)+Math.abs(dy) > 0.25 || Math.abs(dk) > 0.0004) raf=requestAnimationFrame(step);
+      else { view.x=target.x; view.y=target.y; view.k=target.k; apply(); raf=null; }
+    };
+    raf=requestAnimationFrame(step);
+  }
+  function fitAll(){ easeTo(0,0,fitScale()); }
+
+  function setLevel(l){ svg.classList.remove('lvl-all','lvl-dept','lvl-sub','lvl-task'); svg.classList.add('lvl-'+l); }
+  function clearDim(){
+    deptRecs.forEach(function(r){ r.el.classList.remove('dimmed','halfdim'); r.own.forEach(function(o){o.classList.remove('dimmed','halfdim');}); });
+    subRecs.forEach(function(s){ s.el.classList.remove('dimmed','halfdim'); });
+    taskRecs.forEach(function(t){ t.el.classList.remove('on'); });
+  }
+  function dimTo(dept,sub){
+    deptRecs.forEach(function(r){ var keep=!dept||r.dept===dept; r.el.classList.toggle('dimmed',!keep); r.own.forEach(function(o){o.classList.toggle('dimmed',!keep);}); });
+    if (sub){
+      taskRecs.forEach(function(t){ if (t.dept===dept) t.el.classList.toggle('halfdim', t.sub!==sub); });
+      subRecs.forEach(function(s){ if (s.dept===dept) s.el.classList.toggle('halfdim', s.sub!==sub); });
+    }
+  }
+  function centroid(items){ var sx=0,sy=0; items.forEach(function(i){sx+=i.x;sy+=i.y;}); return {x:sx/items.length,y:sy/items.length}; }
+
+  var ins=document.getElementById('inspector'), crumbs=document.getElementById('crumbs');
+  function setCrumbs(parts){
+    crumbs.innerHTML = parts.map(function(p,i){ return p.fn ? '<button data-i="'+i+'">'+esc(p.label)+'</button>' : '<span class="now">'+esc(p.label)+'</span>'; }).join(' <span class="sep">/</span> ');
+    crumbs.querySelectorAll('button').forEach(function(b){ b.addEventListener('click', function(){ parts[+b.dataset.i].fn(); }); });
+  }
+  function setWM(text){ wmText.textContent = text.toUpperCase(); }
+
+  function openOverview(){
+    clearDim(); setLevel('all'); fitAll(); setWM('Node Zero');
+    setCrumbs([{label:'All departments'}]);
+    var rows = DEPTS.slice().sort(function(a,b){return b.count-a.count;}).map(function(d){
+      return '<li data-d="'+DEPTS.indexOf(d)+'"><span>'+esc(d.name)+'</span><span class="n">'+d.count+'</span></li>';
+    }).join('');
+    ins.innerHTML = '<div class="ins-kick">The whole team</div><h2>'+TOTAL+' tasks, one shared context</h2>'+
+      '<p>Every square is one job a finance function actually runs. All of them read the same picture of your company before they do anything.</p>'+
+      '<ul class="rows">'+rows+'</ul><div class="ins-foot">Pick a department here, or click any node on the map.</div>';
+    ins.querySelectorAll('.rows li').forEach(function(li){ li.addEventListener('click', function(){ openDept(DEPTS[+li.dataset.d]); }); });
+  }
+
+  function openDept(d){
+    clearDim(); setLevel('dept'); dimTo(d,null); setWM(d.name);
+    var pts = taskRecs.filter(function(t){return t.dept===d;});
+    var c = centroid(pts.length?pts:[pol(R_D,d.mid)]);
+    easeTo(c.x*0.7, c.y*0.7, fitScale()*1.55);
+    setCrumbs([{label:'All',fn:openOverview},{label:d.name}]);
+    var rows = d.subs.map(function(s,i){ return '<li data-s="'+i+'">'+esc(s.name)+'<span class="n">'+s.tasks.length+'</span></li>'; }).join('');
+    ins.innerHTML = '<button class="back-btn">← all departments</button><div class="ins-kick">Department</div>'+
+      '<h2>'+esc(d.name)+'</h2><p>'+esc(d.note)+'</p><ul class="rows">'+rows+'</ul>'+
+      '<div class="ins-foot">'+d.count+' tasks across '+d.subs.length+' branches.</div>';
+    ins.querySelector('.back-btn').addEventListener('click', openOverview);
+    ins.querySelectorAll('.rows li').forEach(function(li){ li.addEventListener('click', function(){ openSub(d, d.subs[+li.dataset.s]); }); });
+  }
+
+  function openSub(d,s){
+    clearDim(); setLevel('sub'); dimTo(d,s); setWM(s.name);
+    var pts = taskRecs.filter(function(t){return t.sub===s;});
+    if (pts.length){ var c=centroid(pts); easeTo(c.x*0.88, c.y*0.88, fitScale()*2.15); }
+    setCrumbs([{label:'All',fn:openOverview},{label:d.name,fn:function(){openDept(d);}},{label:s.name}]);
+    var chips = s.tasks.map(function(n){ return '<span class="chip" data-n="'+esc(n)+'">'+esc(n)+'</span>'; }).join('');
+    ins.innerHTML = '<button class="back-btn">← '+esc(d.name)+'</button><div class="ins-kick">Branch · '+esc(d.name)+'</div>'+
+      '<h2>'+esc(s.name)+'</h2><p>'+s.tasks.length+' tasks on this branch. Each one reads your context base first and stops rather than guessing at anything missing.</p>'+
+      '<div class="chips">'+chips+'</div><div class="ins-foot">Click one to open it on the map.</div>';
+    ins.querySelector('.back-btn').addEventListener('click', function(){ openDept(d); });
+    ins.querySelectorAll('.chip[data-n]').forEach(function(c2){
+      c2.addEventListener('click', function(){ var rec=taskRecs.filter(function(t){return t.name===c2.dataset.n && t.sub===s;})[0]; if(rec) openTask(rec); });
+    });
+  }
+
+  function openTask(rec){
+    clearDim(); setLevel('task'); dimTo(rec.dept,rec.sub); rec.el.classList.remove('halfdim'); rec.el.classList.add('on');
+    setWM(rec.name);
+    easeTo(rec.x*0.94, rec.y*0.94, fitScale()*2.7);
+    setCrumbs([{label:'All',fn:openOverview},{label:rec.dept.name,fn:function(){openDept(rec.dept);}},{label:rec.sub.name,fn:function(){openSub(rec.dept,rec.sub);}},{label:rec.name}]);
+    var sibs = rec.sub.tasks.length-1;
+    ins.innerHTML = '<button class="back-btn">← '+esc(rec.sub.name)+'</button><div class="ins-kick">Task</div>'+
+      '<h2>'+esc(rec.name)+'</h2><div class="trail">'+esc(rec.dept.name)+' &rsaquo; '+esc(rec.sub.name)+'</div>'+
+      '<div class="ins-foot">Sits with '+sibs+' other '+(sibs===1?'task':'tasks')+' on the '+esc(rec.sub.name)+' branch. Full task detail is part of the Treasury Mentor Network.</div>';
+    ins.querySelector('.back-btn').addEventListener('click', function(){ openSub(rec.dept,rec.sub); });
+  }
+
+  var search=document.getElementById('search');
+  search.addEventListener('input', function(){
+    var q=search.value.trim().toLowerCase();
+    if(!q){ openOverview(); return; }
+    clearDim(); setLevel('sub'); setWM('Search');
+    var hits = taskRecs.filter(function(t){ return t.name.toLowerCase().indexOf(q)!==-1 || t.sub.name.toLowerCase().indexOf(q)!==-1; });
+    var set={}; hits.forEach(function(h){ set[h.name+'|'+h.sub.name]=1; });
+    deptRecs.forEach(function(r){ var any=hits.some(function(h){return h.dept===r.dept;}); r.el.classList.toggle('dimmed',!any); r.own.forEach(function(o){ if(!o.classList.contains('task-hit')) o.classList.toggle('dimmed',!any); }); });
+    taskRecs.forEach(function(t){ t.el.classList.toggle('dimmed', !set[t.name+'|'+t.sub.name]); });
+    if (hits.length){ var c=centroid(hits); easeTo(c.x*0.55, c.y*0.55, fitScale()*1.2); }
+    setCrumbs([{label:'All',fn:function(){search.value='';openOverview();}},{label:'"'+q+'"'}]);
+    ins.innerHTML = '<div class="ins-kick">Search</div><h2>'+hits.length+' match'+(hits.length===1?'':'es')+'</h2>'+
+      '<div class="chips">'+hits.slice(0,44).map(function(h,i){ return '<span class="chip" data-i="'+i+'" title="'+esc(h.dept.name)+' › '+esc(h.sub.name)+'">'+esc(h.name)+'</span>'; }).join('')+
+      (hits.length>44?'<span class="chip" style="opacity:.5;cursor:default">+'+(hits.length-44)+' more</span>':'')+'</div>'+
+      '<div class="ins-foot">Clear the box to see the whole map again.</div>';
+    ins.querySelectorAll('.chip[data-i]').forEach(function(c2){ c2.addEventListener('click', function(){ search.value=''; openTask(hits[+c2.dataset.i]); }); });
+  });
+
+  document.getElementById('core').style.cursor='pointer';
+  document.getElementById('core').addEventListener('click', function(e){ e.stopPropagation(); search.value=''; openOverview(); });
+  svg.addEventListener('click', function(e){ if (e.target===svg || e.target.id==='cam') { search.value=''; openOverview(); } });
+  window.addEventListener('resize', function(){ fitAll(); });
+
+  view.k = fitScale();
+  openOverview();
+})();
+</script>
+
+</body>
+</html>

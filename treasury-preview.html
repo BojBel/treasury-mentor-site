@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Treasury Preview</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Cormorant+Garamond:wght@500;600&display=swap');
+  :root{ --ink:#0E1116; --panel:#171B21; --line:#262B33; --teal:#4CABC4; --teal-deep:#2E7E93;
+    --cream:#F4F1EA; --grey:#8B94A0; --greyd:#5B636F; }
+  *{box-sizing:border-box;}
+  body{margin:0;background:#F7FAFB;color:#000;
+    font-family:'Archivo',-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased;}
+  .shell{max-width:1180px;margin:0 auto;padding:40px 24px 56px;}
+  .eyebrow{font-size:11.5px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:#2E7E93;margin-bottom:12px;}
+  h1{font-weight:800;font-size:clamp(24px,3.6vw,36px);line-height:1.15;letter-spacing:-.02em;margin:0 0 10px;max-width:34ch;}
+  h1 .t{color:#2E7E93;}
+  .lede{max-width:66ch;font-size:15px;line-height:1.6;color:#5A6470;margin:0 0 26px;}
+
+  .stage{position:relative;height:720px;border:1px solid #1e232a;border-radius:10px;overflow:hidden;background:var(--ink);}
+  svg#nerve{display:block;width:100%;height:100%;}
+
+  .ring{fill:none;stroke:#1c2129;stroke-width:1;stroke-dasharray:1.5 6;}
+  .wm{font-family:'Cormorant Garamond',serif;font-weight:600;fill:#fff;opacity:.035;letter-spacing:.05em;pointer-events:none;transition:opacity .4s ease;}
+
+  .fiber{fill:none;transition:stroke-opacity .4s ease;}
+  .fiber-dot{fill:var(--teal);}
+  .soma{fill:var(--cream);stroke:var(--teal);stroke-width:3;}
+  .soma-icon{fill:none;stroke:var(--teal);stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;}
+
+  .branch-hit,.task-hit{cursor:pointer;}
+  .branch-body{fill:var(--cream);transition:fill .25s ease;}
+  .branch-hit:hover .branch-body{fill:#fff;}
+  .branch-icon{fill:none;stroke:#12151a;stroke-width:1.3;stroke-linecap:round;stroke-linejoin:round;}
+  .branch-pill{fill:#000;transition:fill .2s ease;}
+  .branch-hit:hover .branch-pill{fill:var(--teal-deep);}
+  .branch-name{font-weight:800;font-size:12px;letter-spacing:.03em;fill:#fff;}
+  .branch-sub{font-size:9.5px;font-weight:600;fill:var(--grey);}
+
+  .bouton{fill:var(--cream);stroke:var(--teal);stroke-width:1.4;transition:fill .2s ease,opacity .2s ease;}
+  .task-hit:hover .bouton{fill:#fff;}
+  .task-hit.on .bouton{fill:var(--teal);}
+  .task-hit.locked .bouton{fill:#22262d;stroke:#3a4048;}
+
+  .dimmed{opacity:.08;}
+  .halfdim{opacity:.28;}
+
+  .back{position:absolute;left:18px;top:16px;font:inherit;font-family:'Archivo';font-size:12px;font-weight:700;color:var(--teal);
+    background:rgba(255,255,255,.05);border:1px solid #262b33;border-radius:5px;padding:7px 13px;cursor:pointer;
+    opacity:0;pointer-events:none;transition:opacity .2s ease;z-index:4;}
+  .back.show{opacity:1;pointer-events:auto;}
+  .back:hover{background:rgba(255,255,255,.1);}
+  .crumbtrail{position:absolute;left:18px;bottom:14px;font-size:11px;color:var(--grey);letter-spacing:.02em;z-index:4;}
+  .hint{position:absolute;right:18px;bottom:14px;font-size:11px;color:#4b525c;letter-spacing:.02em;z-index:4;}
+
+  .veil{position:absolute;inset:0;background:rgba(0,0,0,.6);opacity:0;pointer-events:none;transition:opacity .2s ease;z-index:6;}
+  .veil.show{opacity:1;pointer-events:auto;}
+  .card{position:absolute;left:50%;top:50%;transform:translate(-50%,-46%);width:min(420px,86%);
+    background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:22px 22px 20px;
+    box-shadow:0 24px 70px rgba(0,0,0,.55);}
+  .card .kick{font-size:10.5px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--teal);margin-bottom:8px;}
+  .card h3{margin:0 0 10px;font-size:19px;font-weight:800;color:#fff;letter-spacing:-.01em;}
+  .card p{margin:0;font-size:13.5px;line-height:1.55;color:var(--grey);}
+  .card .close{position:absolute;right:14px;top:14px;background:none;border:none;color:var(--grey);font-size:18px;cursor:pointer;line-height:1;}
+  .card .close:hover{color:#fff;}
+  .card.locked p{filter:blur(3.5px);user-select:none;}
+  .card .lockrow{margin-top:14px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;}
+  .card .lockrow span{font-size:12px;color:var(--grey);}
+  .card .lockrow button{font:inherit;font-size:12.5px;font-weight:700;background:var(--teal);color:#08141a;
+    border:none;border-radius:5px;padding:9px 14px;cursor:pointer;white-space:nowrap;}
+  .card .lockrow button:hover{background:#5cbcd4;}
+
+  .foot{margin-top:22px;font-size:12.5px;color:#8B949E;max-width:66ch;line-height:1.6;}
+</style>
+</head>
+<body>
+
+
+<div class="shell">
+  <div class="eyebrow">The Treasury Mentor · Node Zero</div>
+  <h1>How the map <span class="t">actually works</span></h1>
+  <p class="lede">Click a branch, it zooms in and opens. Click a task for the at-a-glance. Cash Management and Debt &amp; Capital Markets are open all the way through — the rest give you the shape, then ask you to join.</p>
+
+  <div class="stage">
+    <svg id="nerve" role="img" aria-label="A map of Treasury tasks branching from a central Treasury node into sixteen branches, each opening into individual tasks.">
+      <g id="cam">
+        <g id="rings"></g>
+        <g id="wm"></g>
+        <g id="fibers"></g>
+        <g id="boutons"></g>
+        <g id="branchnodes"></g>
+        <g id="core">
+          <circle class="soma" cx="0" cy="0" r="40"></circle>
+          <path class="soma-icon" d="M2 12 L6.2 7.6 L9.2 10 L14 3.6 M10.6 3.6 H14 V7" transform="translate(-9,-9) scale(1.25)"></path>
+        </g>
+      </g>
+    </svg>
+    <button class="back" id="back">← all branches</button>
+    <div class="crumbtrail" id="crumb">Treasury</div>
+    <div class="hint">hover for a name · click to open</div>
+    <div class="veil" id="veil"></div>
+  </div>
+
+  <div class="foot">This preview covers Treasury only — 16 branches, 93 tasks, current as of the latest library pass. The full map spans eight departments and 364 tasks, all reading one shared picture of your company.</div>
+</div>
+
+<script>
+(function(){
+  var NS='http://www.w3.org/2000/svg';
+  function mk(t,a){var e=document.createElementNS(NS,t);for(var k in a)e.setAttribute(k,a[k]);return e;}
+  function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+  var CAPS={ap:'AP',ar:'AR',kpi:'KPI',roi:'ROI',npv:'NPV',sox:'SOX',etr:'ETR',utp:'UTP',fx:'FX',var:'VaR',
+    je:'JE',bs:'BS',ic:'IC',dd:'DD',cim:'CIM',lbo:'LBO',qa:'Q&A',pbc:'PBC',cwip:'CWIP',tp:'TP',ppa:'PPA',
+    gaap:'GAAP',cbcr:'CbCR',idr:'IDR',kyc:'KYC',bu:'BU',gl:'GL',rec:'Rec',btax:'Book-to-Tax',dso:'DSO',
+    dpo:'DPO',tms:'TMS',ai:'AI',lc:'LC',rfp:'RFP'};
+  function pretty(raw){
+    var n = raw.replace(/\.md$/i,'').replace(/_1$/,'');
+    if (n.indexOf(' ') === -1) {
+      n = n.replace(/_/g,' / ').replace(/-/g,' ');
+      n = n.split(' ').filter(Boolean).map(function(w){
+        var lw=w.toLowerCase();
+        if (CAPS[lw]) return CAPS[lw];
+        return w.charAt(0).toUpperCase()+w.slice(1);
+      }).join(' ');
+    } else { n = n.replace(/_/g,' / '); }
+    return n;
+  }
+
+  var ICONS = [
+    'M2 12 L6.2 7.6 L9.2 10 L14 3.6 M10.6 3.6 H14 V7',
+    'M4.5 14 V3.5 H10 V14 M4.5 14H11.5 M6 6H6.4 M8.2 6H8.6 M6 8.6H6.4 M8.2 8.6H8.6 M6 11.2H6.4 M8.2 11.2H8.6 M11.5 9V14',
+    'M3 8.3 L6.2 11.3 L13 4.2',
+    'M4.5 2 H9.5 L12 4.5 V14 H4.5 Z M9.5 2 V4.5 H12',
+    'M2.5 3.5 H13.5 V10.2 H6.7 L4.2 12.6 V10.2 H2.5 Z',
+    'M3 12.6 L3.6 10.1 L10.4 3.3 A1.15 1.15 0 0112 5 L5.2 11.8 Z',
+    'M7.2 11a3.8 3.8 0 100-7.6 3.8 3.8 0 000 7.6z M9.9 9.9 L13.3 13.3',
+    'M8 2 L12.7 4 V8.1 C12.7 11.4 10.6 13.1 8 13.9 C5.4 13.1 3.3 11.4 3.3 8.1 V4 Z',
+    'M8 4.6 V8 L10.2 9.4 M8 14a6 6 0 100-12 6 6 0 000 12z',
+    'M8 2.3 L14 5.5 L8 8.7 L2 5.5 Z M2 8.3 L8 11.5 L14 8.3 M2 11 L8 14.2 L14 11'
+  ];
+
+  var GLANCE_LOCKED = 'Join the Network to see the at-a-glance for this task.';
+  var GLANCE_DEFAULT = 'One task, end to end — reads your context files first, refuses to invent a number it wasn\'t given.';
+
+  var BRANCHES = [
+    { name:'Cash Management', open:true, files:['bank-account-management','bank-fee-analysis','bank-statement-reconciliation','cash-concentration-sweeps','cash-reporting','daily-cash-positioning','excess-cash-investment','intercompany-funding-pooling-structure-designer','kyc-bank-onboarding','trapped-cash-repatriation-analyzer'] },
+    { name:'Debt & Capital Markets', open:true, files:['capital-structure-strategy','covenant-compliance','debt-issuance-refinancing','facility-maturity-management','lender-reporting','rating-agency-support'] },
+    { name:'Working Capital', open:false, files:['ap-payment-timing','ar-monitoring-collections','cash-conversion-cycle-analytics','dpo-optimizer','dso-driver-analyzer','intercompany-reconciliation-settlement','net-working-capital-target-setter','receivables-financing-analyzer','seasonal-working-capital-planner','supply-chain-finance-program-manager','working-capital-benchmark-analyzer','working-capital-bridge','working-capital-forecaster','working-capital-initiative-tracker'] },
+    { name:'Forecasting', open:false, files:['balance-sheet-forecast','cash-flow-13-week','cash-flow-52-week','cash-flow-statement-indirect','debt-revolver-schedule','forecast-accuracy-tracking','forecast-consolidation','forward-covenant-testing','scenario-sensitivity-forecasting','weekly-income-statement','weekly-rollforward'] },
+    { name:'Cash Investment Policy & Portfolio Management', open:false, files:['eligible-instrument-screener','investment-policy-compliance-tester','investment-policy-exception-approver','investment-reporting-package-builder','issuer-credit-monitor','maturity-ladder-manager','portfolio-construction-modeler','portfolio-performance-tracker','portfolio-risk-aggregator','yield-optimization-analyzer'] },
+    { name:'Payment Controls', open:false, files:['bank-file-reconciler','check-fraud-monitor','duplicate-payment-screener','fraud-incident-responder','payment-approval-router','payment-exception-escalator','payment-file-validator','payment-timing-optimizer','positive-pay-exception-reviewer','wire-fraud-detector'] },
+    { name:'Financial Risk Management', open:false, files:['commodity-risk','credit-risk-counterparty-monitoring','fx-exposure-var','hedge-execution','interest-rate-risk'] },
+    { name:'Insurance', open:false, files:['certificate-of-insurance-management','claims-tracking','coverage-gap-analysis','insurance-program-management','insurance-renewal-support'] },
+    { name:'Corporate Actions Support', open:false, files:['buyback-compliance-monitor','buyback-execution-tracker','dividend-payment-administrator','drip-program-administrator'] },
+    { name:'Bank Relationship Management', open:false, files:['bank-relationship-reviewer','bank-service-level-monitor','bank-wallet-share-analyzer'] },
+    { name:'Payment Program Optimization', open:false, files:['corporate-card-program-administrator','integrated-payables-rebate-modeler','payment-method-migration-analyzer'] },
+    { name:'Pension Treasury Oversight', open:false, files:['pension-asset-liability-monitor','pension-contribution-planner','pension-funding-status-monitor'] },
+    { name:'TMS', open:false, files:['tms-access-administrator','tms-data-integrity-monitor','tms-evaluation-selection-framework','tms-requirements-definition','tms-workflow-configurator'] },
+    { name:'Trade Finance & LC', open:false, files:['letter-of-credit-tracker','trade-finance-facility-manager'] },
+    { name:'Bank RFP & Selection', open:false, files:['bank-rfp-manager'] },
+    { name:'Treasury Technology & AI Adoption Roadmap', open:false, files:['treasury-technology-ai-adoption-roadmap-builder'] }
+  ];
+  BRANCHES.forEach(function(b,i){ b.tasks=b.files.map(pretty); b.count=b.tasks.length; b.icon=ICONS[i%ICONS.length]; });
+  var TOTAL = BRANCHES.reduce(function(a,b){return a+b.count;},0);
+
+  // ---------- geometry (full 360, span proportional to task count) ----------
+  var GAP=5, usable=360-GAP*BRANCHES.length, R_B=280, R_T0=440, R_TSTEP=30;
+  var cur=-90-GAP/2;
+  BRANCHES.forEach(function(b){
+    b.a0=cur+GAP/2; b.span=(b.count/TOTAL)*usable; b.a1=b.a0+b.span; b.mid=(b.a0+b.a1)/2; cur=b.a1+GAP/2;
+  });
+
+  function pol(r,a){ var t=a*Math.PI/180; return {x:r*Math.cos(t), y:r*Math.sin(t)}; }
+  function fiber(r1,a1,r2,a2,wob){
+    var p1=pol(r1,a1), p2=pol(r2,a2), m=(r1+r2)/2;
+    var c1=pol(m*0.9, a1+(wob||0)), c2=pol(m*1.1, a2-(wob||0)*0.6);
+    return 'M'+p1.x.toFixed(1)+','+p1.y.toFixed(1)+'C'+c1.x.toFixed(1)+','+c1.y.toFixed(1)+' '+c2.x.toFixed(1)+','+c2.y.toFixed(1)+' '+p2.x.toFixed(1)+','+p2.y.toFixed(1);
+  }
+
+  var gR=document.getElementById('rings'), gWM=document.getElementById('wm'), gF=document.getElementById('fibers'),
+      gB=document.getElementById('boutons'), gBr=document.getElementById('branchnodes');
+
+  [R_B,R_T0].forEach(function(r){ gR.appendChild(mk('circle',{class:'ring',cx:0,cy:0,r:r})); });
+  var wmText = mk('text',{class:'wm',x:0,y:65,'text-anchor':'middle','font-size':150}); wmText.textContent='TREASURY'; gWM.appendChild(wmText);
+
+  var taskRecs=[], branchRecs=[];
+
+  BRANCHES.forEach(function(b,bi){
+    var own=[], wob=(bi%2?1:-1)*3;
+    var f0 = mk('path',{class:'fiber',d:fiber(40,b.mid,R_B-16,b.mid,wob),stroke:'#333b45','stroke-width':2.2,'stroke-opacity':.85,'stroke-linecap':'round'});
+    gF.appendChild(f0); own.push(f0);
+
+    var n=b.tasks.length, per=Math.min(5,Math.max(2,Math.ceil(Math.sqrt(n*1.5))));
+    b.tasks.forEach(function(name,i){
+      var row=Math.floor(i/per), inRow=i%per, rowN=Math.min(per,n-row*per);
+      var r=R_T0+row*R_TSTEP;
+      var wedge=Math.max(b.a1-b.a0-0.5,0.7), step=wedge/rowN;
+      var a=b.a0+0.25+step*(inRow+0.5);
+      var p=pol(r,a);
+      var f2=mk('path',{class:'fiber',d:fiber(R_B+16,b.mid,r-8,a,1.2),stroke:'#2a313b','stroke-width':1.1,'stroke-opacity':.6,'stroke-linecap':'round'});
+      gF.appendChild(f2); own.push(f2);
+
+      var tg = mk('g',{class:'task-hit'+(b.open?'':' locked'),role:'button','aria-label':name});
+      tg.appendChild(mk('rect',{class:'bouton',x:(p.x-5.5).toFixed(1),y:(p.y-5.5).toFixed(1),width:11,height:11,rx:2}));
+      var t2=mk('title',{}); t2.textContent=name+'  ·  '+b.name; tg.appendChild(t2);
+      gB.appendChild(tg); own.push(tg);
+
+      var rec={el:tg,name:name,branch:b,x:p.x,y:p.y,locked:!b.open};
+      taskRecs.push(rec);
+      tg.addEventListener('click', function(e){ e.stopPropagation(); openTask(rec); });
+    });
+
+    var bp = pol(R_B, b.mid);
+    var bg = mk('g',{class:'branch-hit',tabindex:'0',role:'button','aria-label':b.name+', '+b.count+' tasks'});
+    bg.appendChild(mk('circle',{class:'branch-body',cx:bp.x.toFixed(1),cy:bp.y.toFixed(1),r:15,stroke:'#4CABC4','stroke-width':2}));
+    bg.appendChild(mk('path',{class:'branch-icon',d:b.icon,transform:'translate('+(bp.x-7.5).toFixed(1)+','+(bp.y-7.5).toFixed(1)+') scale(0.94)'}));
+    var right = Math.cos(b.mid*Math.PI/180) >= 0;
+    var lx = bp.x + (right?26:-26);
+    var nm = mk('text',{class:'branch-name',x:lx.toFixed(1),y:(bp.y-1).toFixed(1),'text-anchor':right?'start':'end'});
+    nm.textContent = b.name.toUpperCase();
+    var sb = mk('text',{class:'branch-sub',x:lx.toFixed(1),y:(bp.y+13).toFixed(1),'text-anchor':right?'start':'end'});
+    sb.textContent = b.count+' tasks'+(b.open?'':' · locked');
+    bg.appendChild(nm); bg.appendChild(sb); gBr.appendChild(bg);
+
+    var bb=nm.getBBox(), bb2=sb.getBBox();
+    var bx=Math.min(bb.x,bb2.x), by=Math.min(bb.y,bb2.y);
+    var bw=Math.max(bb.x+bb.width,bb2.x+bb2.width)-bx, bh=Math.max(bb.y+bb.height,bb2.y+bb2.height)-by;
+    var padX=9,padY=6;
+    var pill = mk('rect',{class:'branch-pill',x:(bx-padX).toFixed(1),y:(by-padY).toFixed(1),width:(bw+padX*2).toFixed(1),height:(bh+padY*2).toFixed(1),rx:(bh/2+padY).toFixed(1)});
+    bg.insertBefore(pill, nm);
+
+    branchRecs.push({el:bg, branch:b, own:own});
+    bg.addEventListener('click', function(e){ e.stopPropagation(); openBranch(b); });
+    bg.addEventListener('keydown', function(e){ if(e.key==='Enter'||e.key===' '){e.preventDefault();openBranch(b);} });
+  });
+
+  // ---------- camera: slow, continuous, click-driven ----------
+  var svg=document.getElementById('nerve'), cam=document.getElementById('cam');
+  var view={x:0,y:0,k:0.5}, target=null, raf=null;
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function apply(){ cam.setAttribute('transform','translate('+view.x+','+view.y+') scale('+view.k+')'); }
+  function box(){ return svg.getBoundingClientRect(); }
+  function fitScale(){ var r=box(); return Math.max(0.28, Math.min(r.width,r.height)/980); }
+  function easeTo(cx,cy,k){
+    var r=box();
+    var nx=r.width/2 - cx*k, ny=r.height/2 - cy*k;
+    if (reduce){ view.x=nx; view.y=ny; view.k=k; apply(); return; }
+    target={x:nx,y:ny,k:k};
+    if (raf) return;
+    var step=function(){
+      var dx=target.x-view.x, dy=target.y-view.y, dk=target.k-view.k;
+      view.x += dx*0.055; view.y += dy*0.055; view.k += dk*0.055;
+      apply();
+      if (Math.abs(dx)+Math.abs(dy) > 0.25 || Math.abs(dk) > 0.0004) raf=requestAnimationFrame(step);
+      else { view.x=target.x; view.y=target.y; view.k=target.k; apply(); raf=null; }
+    };
+    raf=requestAnimationFrame(step);
+  }
+  function fitAll(){ easeTo(0,0,fitScale()); }
+
+  function clearDim(){
+    branchRecs.forEach(function(r){ r.el.classList.remove('dimmed'); r.own.forEach(function(o){o.classList.remove('dimmed','halfdim');}); });
+    taskRecs.forEach(function(t){ t.el.classList.remove('on'); });
+  }
+  function dimTo(branch){
+    branchRecs.forEach(function(r){ var keep=!branch||r.branch===branch; r.el.classList.toggle('dimmed',!keep); r.own.forEach(function(o){o.classList.toggle('dimmed',!keep);}); });
+  }
+  function centroid(items){ var sx=0,sy=0; items.forEach(function(i){sx+=i.x;sy+=i.y;}); return {x:sx/items.length,y:sy/items.length}; }
+
+  var backBtn=document.getElementById('back'), crumbEl=document.getElementById('crumb'), veil=document.getElementById('veil');
+
+  function openOverview(){
+    clearDim(); fitAll(); wmText.textContent='TREASURY'; backBtn.classList.remove('show'); crumbEl.textContent='Treasury';
+  }
+  function openBranch(b){
+    clearDim(); dimTo(b); wmText.textContent=b.name.toUpperCase(); backBtn.classList.add('show'); crumbEl.textContent='Treasury › '+b.name;
+    var pts = taskRecs.filter(function(t){return t.branch===b;});
+    var c = pts.length ? centroid(pts) : pol(R_B,b.mid);
+    easeTo(c.x*0.88, c.y*0.88, fitScale()*2.15);
+  }
+  function openTask(rec){
+    dimTo(rec.branch); rec.el.classList.add('on'); wmText.textContent=rec.name.toUpperCase();
+    easeTo(rec.x*0.94, rec.y*0.94, fitScale()*2.7);
+    veil.innerHTML='';
+    var card = h('div','card'+(rec.locked?' locked':''));
+    var close = h('button','close'); close.innerHTML='&times;'; close.addEventListener('click', function(){ veil.classList.remove('show'); });
+    var kick = h('div','kick'); kick.textContent = rec.branch.name;
+    var h3 = document.createElement('h3'); h3.textContent = rec.name;
+    var p = document.createElement('p'); p.textContent = rec.locked ? GLANCE_LOCKED : GLANCE_DEFAULT;
+    card.appendChild(close); card.appendChild(kick); card.appendChild(h3); card.appendChild(p);
+    if (rec.locked){
+      var row=h('div','lockrow');
+      var sp=document.createElement('span'); sp.textContent='Locked in the preview';
+      var btn=document.createElement('button'); btn.textContent='Join the Network — $30/mo';
+      btn.addEventListener('click', function(){ window.open('https://treasurymentor.com','_blank'); });
+      row.appendChild(sp); row.appendChild(btn); card.appendChild(row);
+    }
+    veil.appendChild(card); veil.classList.add('show');
+  }
+  veil.addEventListener('click', function(e){ if(e.target===veil) veil.classList.remove('show'); });
+  function h(t,c){ var e=document.createElement(t); e.className=c; return e; }
+
+  backBtn.addEventListener('click', openOverview);
+  document.getElementById('core').style.cursor='pointer';
+  document.getElementById('core').addEventListener('click', function(e){ e.stopPropagation(); openOverview(); });
+  svg.addEventListener('click', function(e){ if (e.target===svg || e.target.id==='cam') openOverview(); });
+  window.addEventListener('resize', function(){ fitAll(); });
+
+  view.k = fitScale();
+  openOverview();
+})();
+</script>
+
+</body>
+</html>
