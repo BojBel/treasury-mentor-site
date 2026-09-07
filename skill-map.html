@@ -28,12 +28,11 @@
   .stage{display:grid;grid-template-columns:minmax(0,1fr) 344px;gap:16px;align-items:start;}
   @media (max-width:980px){ .stage{grid-template-columns:1fr;} }
 
-  .canvas-shell{position:relative;height:740px;border:1px solid #1e232a;border-radius:10px;overflow:hidden;background:var(--ink);}
+  .canvas-shell{position:relative;height:740px;border:1px solid #D8DCE1;border-radius:10px;overflow:hidden;background:#FAFBFC;}
   svg#nerve{display:block;width:100%;height:100%;}
 
-  .ring{fill:none;stroke:#1c2129;stroke-width:1;stroke-dasharray:1.5 6;}
-  .wm{font-family:'Cormorant Garamond',serif;font-weight:600;fill:#fff;opacity:.03;letter-spacing:.05em;pointer-events:none;transition:opacity .4s ease;}
-
+  .ring{fill:none;stroke:#E3E6EA;stroke-width:1;stroke-dasharray:1.5 6;}
+  .wm{font-family:'Cormorant Garamond',serif;font-weight:600;fill:#000;opacity:.05;letter-spacing:.05em;pointer-events:none;transition:opacity .4s ease;}
   .fiber{fill:none;transition:stroke-opacity .4s ease;}
   .fiber-dot{fill:var(--teal);transition:opacity .4s ease;}
   .soma{fill:var(--cream);stroke:var(--teal);stroke-width:3;}
@@ -41,7 +40,7 @@
 
   .dept-hit,.sub-hit,.task-hit{cursor:pointer;}
   .dept-body{fill:var(--cream);transition:fill .25s ease;}
-  .dept-hit:hover .dept-body{fill:#fff;}
+  .dept-hit:hover .dept-body{fill:#E7F3F6;}
   .dept-icon{fill:none;stroke:#12151a;stroke-width:1.3;stroke-linecap:round;stroke-linejoin:round;}
   .dept-pill{fill:#000;transition:fill .2s ease;}
   .dept-hit:hover .dept-pill{fill:var(--teal-deep);}
@@ -50,11 +49,11 @@
 
   .sub-body{fill:var(--cream);stroke:var(--teal);stroke-width:2;transition:fill .2s ease;}
   .sub-hit:hover .sub-body{fill:#fff;}
-  .sub-name{font-size:10px;font-weight:600;fill:#fff;pointer-events:none;opacity:0;transition:opacity .35s ease;}
+  .sub-name{font-size:10px;font-weight:600;fill:#000;pointer-events:none;opacity:0;transition:opacity .35s ease;}
   .lvl-sub .sub-name,.lvl-task .sub-name{opacity:1;}
 
   .bouton{fill:var(--cream);stroke:var(--teal);stroke-width:1;transition:fill .2s ease,stroke-width .2s ease;}
-  .task-hit:hover .bouton{fill:#fff;}
+  .task-hit:hover .bouton{fill:#E7F3F6;}
   .task-hit.on .bouton{fill:var(--teal);stroke-width:2;}
 
   .dimmed{opacity:.08;}
