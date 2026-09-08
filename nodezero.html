@@ -1,0 +1,1810 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Node Zero · Build Your Own Finance Team</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Cormorant+Garamond:ital,wght@1,500;1,600&family=Inter:wght@400;500;600&display=swap');
+
+  :root{
+    --teal:#4CABC4; --teal-deep:#2E7E93; --teal-soft:#E7F3F6;
+    --ink:#0A0A0A; --body:#5A6470; --mute:#8B949E;
+    --line:#E6E9EC; --line-soft:#EFF1F3; --wash:#F4F5F7; --cream:#F4F1EA;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;scroll-padding-top:92px;}
+  body{margin:0;background:#fff;color:var(--ink);
+    font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased;}
+
+  h1,h2,h3,.arch{font-family:'Archivo',sans-serif;}
+  .ital{font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:600;}
+
+  .wrap{max-width:1240px;margin:0 auto;padding:0 24px;}
+  section{padding:104px 0;scroll-margin-top:92px;}
+  .sec-wash{background:var(--wash);}
+  .sec-head{text-align:center;max-width:760px;margin:0 auto 56px;}
+  .kick{font-size:11.5px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--teal);margin-bottom:16px;}
+  h2{font-weight:800;font-size:clamp(28px,4vw,46px);line-height:1.08;letter-spacing:-.03em;margin:0 0 18px;}
+  .sec-head p{font-size:16.5px;line-height:1.65;color:var(--body);margin:0;}
+  .sec-head p strong{color:var(--ink);font-weight:600;}
+
+  /* ---------- floating nav ---------- */
+  .navbar{position:fixed;top:16px;left:50%;transform:translateX(-50%);z-index:60;
+    display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.86);
+    backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+    border:1px solid var(--line);border-radius:999px;padding:8px 8px 8px 20px;
+    box-shadow:0 6px 26px rgba(10,10,10,.07);max-width:calc(100vw - 32px);}
+  .nav-mark{font-family:'Archivo',sans-serif;font-weight:800;font-size:13px;letter-spacing:.02em;
+    text-transform:uppercase;white-space:nowrap;margin-right:8px;text-decoration:none;color:var(--ink);}
+  .nav-mark span{color:var(--teal);}
+  .nav-links{display:flex;gap:4px;}
+  .nav-links a{font-size:13.5px;font-weight:500;color:var(--body);text-decoration:none;
+    padding:8px 12px;border-radius:999px;transition:background .18s ease,color .18s ease;white-space:nowrap;}
+  .nav-links a:hover{background:var(--line-soft);color:var(--ink);}
+  .nav-cta{font-family:'Archivo',sans-serif;font-weight:700;font-size:13px;background:var(--ink);color:#fff;
+    text-decoration:none;padding:10px 18px;border-radius:999px;white-space:nowrap;transition:background .18s ease;}
+  .nav-cta:hover{background:var(--teal-deep);}
+  @media (max-width:900px){ .nav-links{display:none;} }
+
+  /* ---------- hero ---------- */
+  .hero{padding:150px 0 70px;text-align:center;}
+  .hero .eyebrow{font-size:11.5px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--teal);margin-bottom:20px;}
+  h1{font-weight:800;font-size:clamp(38px,6.4vw,74px);line-height:1.0;letter-spacing:-.04em;
+    margin:0 auto 44px;max-width:14ch;}
+  h1 .t{color:var(--teal);}
+  .hero-cols{display:grid;grid-template-columns:repeat(3,1fr);gap:40px;text-align:left;
+    max-width:1120px;margin:0 auto;}
+  .hero-cols p{font-size:15.5px;line-height:1.7;color:var(--body);margin:0;}
+  .hero-cols p strong{color:var(--ink);font-weight:600;}
+  .hero-cols .lead{border-top:2px solid var(--teal);padding-top:20px;}
+  @media (max-width:880px){ .hero-cols{grid-template-columns:1fr;gap:26px;} }
+
+  .statline{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:0;
+    margin:56px auto 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+    max-width:1120px;padding:22px 0;}
+  .statline .st{padding:0 30px;border-right:1px solid var(--line);text-align:center;}
+  .statline .st:last-child{border-right:none;}
+  .statline .n{font-family:'Archivo',sans-serif;font-weight:800;font-size:26px;letter-spacing:-.03em;line-height:1;}
+  .statline .l{font-size:11px;font-weight:600;letter-spacing:.13em;text-transform:uppercase;color:var(--mute);margin-top:7px;}
+  .statline .note{padding:0 30px;font-size:13.5px;line-height:1.5;color:var(--body);text-align:left;max-width:280px;}
+  @media (max-width:820px){ .statline .note{display:none;} .statline .st{padding:0 18px;} }
+
+  /* ---------- map ---------- */
+  .stage{display:grid;grid-template-columns:minmax(0,1fr) 348px;gap:16px;align-items:start;}
+  @media (max-width:1000px){ .stage{grid-template-columns:1fr;} }
+
+  .canvas-shell{position:relative;height:740px;border:1px solid #D8DCE1;border-radius:12px;overflow:hidden;background:#FAFBFC;}
+  svg#nerve{display:block;width:100%;height:100%;}
+
+  .ring{fill:none;stroke:#E3E6EA;stroke-width:1;stroke-dasharray:1.5 6;}
+  .wm{font-family:'Cormorant Garamond',serif;font-weight:600;fill:#0A0A0A;opacity:.05;letter-spacing:.05em;pointer-events:none;transition:opacity .4s ease;}
+
+  .fiber{fill:none;transition:stroke-opacity .4s ease;}
+  .fiber-dot{fill:var(--teal);transition:opacity .4s ease;}
+  .soma{fill:var(--cream);stroke:var(--teal);stroke-width:3;}
+  .soma-icon{fill:none;stroke:var(--teal);stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;}
+
+  .dept-hit,.sub-hit,.task-hit{cursor:pointer;}
+  .dept-body{fill:var(--cream);transition:fill .25s ease;}
+  .dept-hit:hover .dept-body{fill:var(--teal-soft);}
+  .dept-icon{fill:none;stroke:#12151a;stroke-width:1.3;stroke-linecap:round;stroke-linejoin:round;}
+  .dept-pill{fill:#0A0A0A;transition:fill .2s ease;}
+  .dept-hit:hover .dept-pill{fill:var(--teal-deep);}
+  .dept-name{font-family:'Archivo',sans-serif;font-weight:800;font-size:12.5px;letter-spacing:.03em;fill:#fff;}
+  .dept-sub{font-family:'Archivo',sans-serif;font-size:9.5px;font-weight:600;fill:#B9C0C8;}
+
+  .sub-body{fill:var(--cream);stroke:var(--teal);stroke-width:2;transition:fill .2s ease;}
+  .sub-hit:hover .sub-body{fill:var(--teal-soft);}
+  .sub-name{font-family:'Archivo',sans-serif;font-size:10px;font-weight:700;fill:#0A0A0A;pointer-events:none;opacity:0;transition:opacity .35s ease;
+    paint-order:stroke;stroke:#FAFBFC;stroke-width:3px;stroke-linejoin:round;}
+  .lvl-sub .sub-name,.lvl-task .sub-name{opacity:1;}
+
+  .bouton{fill:var(--cream);stroke:var(--teal);stroke-width:1;transition:fill .2s ease,stroke-width .2s ease;}
+  .task-hit:hover .bouton{fill:var(--teal-soft);}
+  .task-hit.on .bouton{fill:var(--teal);stroke-width:2;}
+
+  .dimmed{opacity:.10;}
+  .halfdim{opacity:.3;}
+
+  .hintline{position:absolute;right:16px;bottom:14px;z-index:4;font-size:11px;font-weight:500;color:#9AA1AA;letter-spacing:.04em;pointer-events:none;}
+  #search{position:absolute;left:16px;top:14px;z-index:4;font-family:inherit;font-size:13px;background:#EFF1F3;
+    color:#0A0A0A;border:1px solid #D8DCE1;border-radius:6px;padding:9px 12px;width:220px;}
+  #search::placeholder{color:#8B94A0;}
+  #search:focus-visible{outline:1.5px solid var(--teal);}
+  .crumbs{position:absolute;right:16px;top:14px;z-index:4;font-size:11.5px;font-weight:500;color:var(--mute);
+    display:flex;align-items:center;gap:7px;flex-wrap:wrap;max-width:58%;justify-content:flex-end;}
+  .crumbs button{font:inherit;font-weight:700;color:var(--teal-deep);background:none;border:none;padding:0;cursor:pointer;}
+  .crumbs button:hover{color:var(--ink);}
+  .crumbs .sep{color:#C7CBD1;}
+  .crumbs .now{color:var(--ink);font-weight:600;}
+
+  .demo-toggle{position:absolute;left:16px;bottom:14px;z-index:5;display:flex;align-items:center;gap:8px;
+    font-family:'Archivo',sans-serif;font-size:11.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+    background:#fff;border:1px solid #D8DCE1;border-radius:999px;padding:8px 14px;cursor:pointer;color:var(--ink);
+    transition:border-color .2s ease;}
+  .demo-toggle:hover{border-color:var(--teal);}
+  .demo-dot{width:7px;height:7px;border-radius:50%;background:var(--teal);}
+  .demo-toggle.paused .demo-dot{background:#C7CBD1;animation:none;}
+  .demo-toggle:not(.paused) .demo-dot{animation:pulse 1.5s ease-in-out infinite;}
+  @keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.35;transform:scale(.8);}}
+
+  aside.inspector{background:#fff;border:1px solid var(--line);border-radius:12px;padding:24px;min-height:440px;position:sticky;top:86px;}
+  .ins-kick{font-size:10.5px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--teal-deep);margin-bottom:12px;}
+  .inspector h2{font-family:'Archivo',sans-serif;font-weight:800;font-size:22px;letter-spacing:-.03em;line-height:1.15;margin:0 0 14px;}
+  .inspector p{font-size:14px;line-height:1.6;color:var(--body);margin:0 0 18px;}
+  .trail{font-size:12px;font-weight:500;color:var(--mute);margin-bottom:16px;}
+  .rows{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:5px;max-height:420px;overflow-y:auto;}
+  .rows li{display:flex;justify-content:space-between;gap:10px;align-items:center;font-size:13.5px;font-weight:500;padding:10px 12px;
+    border:1px solid var(--line);border-left:3px solid var(--teal);border-radius:5px;cursor:pointer;background:#fff;transition:background .15s ease;}
+  .rows li:hover{background:#F7FAFB;}
+  .rows li .n{font-size:11.5px;font-weight:600;color:var(--mute);}
+  .back-btn{font-family:inherit;font-size:12px;font-weight:700;background:none;border:none;color:var(--teal-deep);cursor:pointer;padding:0;margin-bottom:14px;}
+  .back-btn:hover{color:var(--ink);}
+  .ins-foot{border-top:1px solid var(--line);padding-top:14px;margin-top:18px;font-size:12px;color:var(--mute);line-height:1.55;}
+  .chips{display:flex;flex-wrap:wrap;gap:6px;}
+  .chip{font-size:12px;font-weight:500;padding:6px 9px;border:1px solid var(--line);border-radius:5px;color:var(--body);cursor:pointer;background:#fff;}
+  .chip:hover{border-color:var(--teal);color:var(--ink);}
+
+  /* ---------- marquee ---------- */
+  .marq-band{padding:70px 0;overflow:hidden;}
+  .marq{overflow:hidden;position:relative;padding:7px 0;
+    -webkit-mask-image:linear-gradient(90deg,transparent,#000 9%,#000 91%,transparent);
+            mask-image:linear-gradient(90deg,transparent,#000 9%,#000 91%,transparent);}
+  .marq-track{display:flex;gap:11px;width:max-content;will-change:transform;}
+  .marq-a .marq-track{animation:slideL 190s linear infinite;}
+  .marq-b .marq-track{animation:slideR 165s linear infinite;}
+  .marq-c .marq-track{animation:slideL 215s linear infinite;}
+  @keyframes slideL{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+  @keyframes slideR{from{transform:translateX(-50%)}to{transform:translateX(0)}}
+  .marq:hover .marq-track{animation-play-state:paused;}
+  .mchip{display:flex;align-items:center;gap:9px;white-space:nowrap;background:#fff;
+    border:1px solid var(--line);border-radius:8px;padding:11px 15px;font-size:13.5px;font-weight:500;color:var(--ink);}
+  .mchip .md{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--teal-deep);}
+  .mchip .sq{width:9px;height:9px;border-radius:2px;background:var(--cream);border:1px solid var(--teal);flex:none;}
+  @media (prefers-reduced-motion:reduce){ .marq-track{animation:none!important;} }
+
+  /* ---------- generic cards ---------- */
+  .grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;}
+  .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;}
+  .grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;}
+  @media (max-width:980px){ .grid-4{grid-template-columns:repeat(2,1fr);} .grid-3{grid-template-columns:1fr;} .grid-2{grid-template-columns:1fr;} }
+  @media (max-width:600px){ .grid-4{grid-template-columns:1fr;} }
+
+  .card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:26px 24px;}
+  .card h3{font-weight:700;font-size:16.5px;letter-spacing:-.01em;margin:0 0 10px;}
+  .card p{font-size:14px;line-height:1.62;color:var(--body);margin:0;}
+  .card .ico{width:36px;height:36px;border:1px solid var(--line);border-radius:9px;display:flex;align-items:center;justify-content:center;margin-bottom:16px;}
+  .card .ico svg{width:17px;height:17px;fill:none;stroke:var(--teal-deep);stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;}
+  .num-badge{width:30px;height:30px;border-radius:50%;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;
+    font-family:'Archivo',sans-serif;font-weight:700;font-size:13px;margin-bottom:16px;color:var(--body);}
+  .num-badge.fill{background:var(--ink);color:#fff;border-color:var(--ink);}
+
+  /* ---------- before / after ---------- */
+  .ba{background:#fff;border:1px solid var(--line);border-radius:12px;padding:24px 22px;}
+  .ba h3{font-weight:700;font-size:15.5px;margin:0 0 14px;}
+  .ba .was{font-size:13.5px;line-height:1.55;color:var(--mute);padding-bottom:14px;border-bottom:1px solid var(--line-soft);}
+  .ba .now-l{display:flex;gap:9px;font-size:13.5px;line-height:1.55;color:var(--ink);font-weight:500;padding-top:14px;}
+  .ba .now-l .ar{color:var(--teal);font-weight:700;flex:none;}
+  .fill-me{display:inline-block;background:#FFF4D6;border:1px dashed #E0B94A;border-radius:4px;
+    padding:1px 7px;font-size:12px;font-weight:600;color:#8A6A12;}
+
+  /* ---------- governance flow ---------- */
+  .flow{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;}
+  .flow-step{padding:30px 26px;background:#fff;border:1px solid var(--line);border-radius:12px;position:relative;}
+  .flow-step .sn{font-family:'Archivo',sans-serif;font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--teal);margin-bottom:14px;}
+  .flow-step h3{font-weight:700;font-size:17px;margin:0 0 10px;}
+  .flow-step p{font-size:14px;line-height:1.62;color:var(--body);margin:0;}
+  @media (max-width:900px){ .flow{grid-template-columns:1fr;} }
+
+  /* ---------- covenant test visual ---------- */
+  .cov{margin-top:34px;background:#fff;border:1px solid var(--line);border-radius:12px;overflow:hidden;}
+  .cov-h{padding:14px 22px;border-bottom:1px solid var(--line);font-size:11px;font-weight:700;
+    letter-spacing:.16em;text-transform:uppercase;color:var(--mute);display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;}
+  .cov-reads{padding:18px 22px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+  .cov-reads .rl{font-size:11.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mute);margin-right:4px;}
+  .fchip{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;background:var(--wash);
+    border:1px solid var(--line);border-radius:5px;padding:6px 10px;color:var(--teal-deep);}
+  .cov-body{display:grid;grid-template-columns:1fr 1fr;}
+  .cov-cell{padding:26px 24px;border-right:1px solid var(--line);}
+  .cov-cell:last-child{border-right:none;}
+  .cov-cell .cn{font-family:'Archivo',sans-serif;font-weight:800;font-size:13px;letter-spacing:.02em;margin-bottom:4px;}
+  .cov-cell .cf{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11.5px;color:var(--mute);margin-bottom:20px;}
+  .cov-val{display:flex;align-items:baseline;gap:12px;margin-bottom:6px;}
+  .cov-val .v{font-family:'Archivo',sans-serif;font-weight:800;font-size:40px;letter-spacing:-.04em;line-height:1;}
+  .cov-val .v.none{color:#C7CBD1;}
+  .badge{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:5px 10px;border-radius:999px;}
+  .badge.pass{background:var(--teal-soft);color:var(--teal-deep);border:1px solid #CBE6EE;}
+  .badge.halt{background:#FDF0EC;color:#B4472E;border:1px solid #F2D6CD;}
+  .cov-thr{font-size:12px;color:var(--mute);margin-bottom:18px;}
+  .gauge{position:relative;height:12px;background:var(--wash);border:1px solid var(--line);border-radius:999px;overflow:hidden;margin-bottom:9px;}
+  .gauge .fillbar{position:absolute;left:0;top:0;bottom:0;background:var(--teal);border-radius:999px;}
+  .gauge .thr{position:absolute;top:-4px;bottom:-4px;width:2px;background:var(--ink);}
+  .gauge.blocked{background:repeating-linear-gradient(45deg,#F1F3F5,#F1F3F5 5px,#E4E7EA 5px,#E4E7EA 10px);}
+  .gauge-l{display:flex;justify-content:space-between;font-size:10.5px;color:var(--mute);margin-bottom:20px;}
+  .cov-lines{border-top:1px solid var(--line-soft);padding-top:14px;display:flex;flex-direction:column;gap:8px;}
+  .cov-line{display:flex;justify-content:space-between;font-size:12.5px;}
+  .cov-line .k{color:var(--body);}
+  .cov-line .n{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-weight:600;}
+  .cov-line.missing .k,.cov-line.missing .n{color:#B4472E;font-weight:600;}
+  .cov-foot{padding:18px 22px;border-top:1px solid var(--line);background:var(--wash);font-size:13px;line-height:1.6;color:var(--body);}
+  .cov-foot b{color:var(--ink);font-weight:600;}
+  @media (max-width:820px){ .cov-body{grid-template-columns:1fr;} .cov-cell{border-right:none;border-bottom:1px solid var(--line);} }
+
+  /* ---------- work pipeline ---------- */
+  .legend{display:flex;gap:20px;justify-content:center;margin-bottom:26px;flex-wrap:wrap;}
+  .legend div{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--body);}
+  .legend .sw{width:13px;height:13px;border-radius:3px;flex:none;}
+  .legend .sw.a{background:var(--teal-soft);border:1px solid #CBE6EE;}
+  .legend .sw.y{background:#0A0A0A;}
+  .pipe{background:#fff;border:1px solid var(--line);border-radius:12px;padding:20px 22px;margin-bottom:12px;}
+  .pipe-h{display:flex;justify-content:space-between;align-items:baseline;gap:14px;margin-bottom:13px;flex-wrap:wrap;}
+  .pipe-h h3{font-family:'Archivo',sans-serif;font-weight:700;font-size:15.5px;margin:0;}
+  .pipe-h .meta{font-size:11.5px;color:var(--mute);white-space:nowrap;}
+  .steps{display:flex;gap:6px;flex-wrap:wrap;}
+  .step{flex:1 1 108px;border-radius:7px;padding:10px 12px;font-size:12px;line-height:1.35;font-weight:500;}
+  .step.auto{background:var(--teal-soft);border:1px solid #CBE6EE;color:var(--teal-deep);}
+  .step.you{background:#0A0A0A;border:1px solid #0A0A0A;color:#fff;}
+  .step .st-l{display:block;font-size:8.5px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;opacity:.65;margin-bottom:4px;}
+
+  /* ---------- dashboard switcher ---------- */
+  .dash-stack{position:relative;}
+  .dpanel{display:none;}
+  .dpanel.on{display:block;animation:fadeIn .45s ease;}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  .board{background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden;box-shadow:0 16px 44px rgba(10,10,10,.06);}
+  .board-h{padding:18px 24px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;}
+  .board-h .bt{font-family:'Archivo',sans-serif;font-weight:800;font-size:17px;letter-spacing:-.02em;}
+  .board-h .bs{font-size:11.5px;color:var(--mute);margin-top:3px;}
+  .board-h .bmeta{font-size:10.5px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--mute);}
+  .krow{display:grid;grid-template-columns:repeat(6,1fr);border-bottom:1px solid var(--line);}
+  .kc{padding:18px 20px;border-right:1px solid var(--line);}
+  .kc:last-child{border-right:none;}
+  .kc .kl{font-size:10px;font-weight:700;letter-spacing:.11em;text-transform:uppercase;color:var(--mute);margin-bottom:8px;}
+  .kc .kv{font-family:'Archivo',sans-serif;font-weight:800;font-size:23px;letter-spacing:-.03em;line-height:1;}
+  .kc .kd{font-size:11px;font-weight:600;margin-top:7px;color:var(--teal-deep);}
+  .kc .kd.warn{color:#B4472E;}
+  .kc .kd.flat{color:var(--mute);}
+  .bgrid{display:grid;grid-template-columns:1.55fr 1fr;}
+  .bcell{padding:22px 24px;border-right:1px solid var(--line);}
+  .bcell:last-child{border-right:none;}
+  .bcell .bh{font-family:'Archivo',sans-serif;font-weight:700;font-size:13px;margin-bottom:3px;}
+  .bcell .bsub{font-size:11px;color:var(--mute);margin-bottom:18px;}
+  .chart{display:flex;align-items:flex-end;gap:5px;height:150px;}
+  .chart .col{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:5px;height:100%;}
+  .chart .col b{display:block;width:100%;background:var(--teal);border-radius:3px 3px 0 0;}
+  .chart .col b.low{background:#E0A33C;}
+  .chart .col b.fc{background:var(--cream);border:1px solid var(--teal);}
+  .chart .col i{font-size:9px;font-style:normal;color:var(--mute);}
+  .chart .col em{font-size:9.5px;font-style:normal;font-weight:700;color:var(--ink);}
+  .hbars{display:flex;flex-direction:column;gap:13px;}
+  .hb .hbl{display:flex;justify-content:space-between;font-size:11.5px;margin-bottom:6px;}
+  .hb .hbl .n{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-weight:600;}
+  .hb .track{height:9px;background:var(--wash);border-radius:999px;overflow:hidden;}
+  .hb .track i{display:block;height:100%;background:var(--teal);border-radius:999px;}
+  .hb .track i.neg{background:#0A0A0A;}
+  .hb .track i.amb{background:#E0A33C;}
+  .ccc{display:flex;align-items:stretch;gap:8px;margin-top:4px;}
+  .ccc .seg{flex:1;text-align:center;padding:13px 8px;border-radius:8px;border:1px solid var(--line);}
+  .ccc .seg .sv{font-family:'Archivo',sans-serif;font-weight:800;font-size:19px;letter-spacing:-.02em;}
+  .ccc .seg .sl{font-size:9.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--mute);margin-top:5px;}
+  .ccc .op{display:flex;align-items:center;font-family:'Archivo',sans-serif;font-weight:800;font-size:17px;color:var(--mute);}
+  .ccc .seg.res{background:var(--teal-soft);border-color:#CBE6EE;}
+  .ccc .seg.res .sv{color:var(--teal-deep);}
+  .dots{display:flex;justify-content:center;align-items:center;gap:11px;margin-top:26px;}
+  .dot{width:9px;height:9px;border-radius:50%;background:#C7CBD1;border:none;padding:0;cursor:pointer;transition:background .2s ease,transform .2s ease;}
+  .dot:hover{background:#9AA1AA;}
+  .dot.on{background:#4A5058;transform:scale(1.35);}
+  .dnames{display:flex;justify-content:center;gap:26px;margin-top:14px;flex-wrap:wrap;}
+  .dname{font-size:12.5px;font-weight:600;color:var(--mute);cursor:pointer;background:none;border:none;font-family:inherit;padding:0;}
+  .dname.on{color:var(--ink);}
+  .dname:hover{color:var(--ink);}
+  @media (max-width:1000px){ .krow{grid-template-columns:repeat(3,1fr);} .kc{border-bottom:1px solid var(--line);} .bgrid{grid-template-columns:1fr;} .bcell{border-right:none;border-bottom:1px solid var(--line);} }
+  @media (max-width:620px){ .krow{grid-template-columns:repeat(2,1fr);} }
+
+  /* ---------- sequential reveal ---------- */
+  .rv{opacity:0;transform:translateY(20px);transition:opacity .65s ease,transform .65s ease;}
+  .rv.in{opacity:1;transform:none;}
+  .rv.d1{transition-delay:.10s;} .rv.d2{transition-delay:.45s;} .rv.d3{transition-delay:.80s;}
+  .rv.d4{transition-delay:1.15s;}
+  @media (prefers-reduced-motion:reduce){ .rv{opacity:1;transform:none;transition:none;} }
+
+  /* ---------- governance step visuals ---------- */
+  .flow-viz{height:96px;margin:0 0 20px;border:1px solid var(--line-soft);border-radius:9px;background:var(--wash);
+    display:flex;align-items:center;justify-content:center;}
+  .flow-viz svg{width:100%;height:100%;}
+  .fv-file{fill:#fff;stroke:#C2C8CF;stroke-width:1;}
+  .fv-file.lit{stroke:var(--teal);}
+  .fv-line{stroke:#C9CDD3;stroke-width:1.2;fill:none;}
+  .fv-line.teal{stroke:var(--teal);}
+  .fv-node{fill:var(--cream);stroke:var(--teal);stroke-width:1.6;}
+  .fv-txt{font-family:'Archivo',sans-serif;font-size:7px;font-weight:700;fill:#8B949E;letter-spacing:.08em;}
+  .fv-txt.on{fill:var(--teal-deep);}
+  .fv-halt{fill:none;stroke:#B4472E;stroke-width:1.5;}
+  .fv-fillbar{fill:#E7F3F6;stroke:#CBE6EE;stroke-width:1;}
+  .fv-blank{fill:none;stroke:#B4472E;stroke-width:1.2;stroke-dasharray:2.5 2.5;}
+  .nxt{position:absolute;right:-14px;top:50%;transform:translateY(-50%);z-index:3;width:28px;height:28px;
+    border-radius:50%;background:#fff;border:1px solid var(--line);display:flex;align-items:center;
+    justify-content:center;font-size:13px;color:var(--mute);font-family:'Archivo',sans-serif;}
+  @media (max-width:900px){ .nxt{display:none;} }
+
+  /* ---------- before / after strip ---------- */
+  .ba-strip{display:grid;grid-template-columns:1fr auto 1fr;gap:0;border-top:1px solid var(--line);}
+  .ba-half{padding:22px 24px;}
+  .ba-half .bl{font-size:10px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;margin-bottom:10px;}
+  .ba-half.before .bl{color:var(--mute);}
+  .ba-half.after .bl{color:var(--teal-deep);}
+  .ba-half p{font-size:13px;line-height:1.6;margin:0;color:var(--body);}
+  .ba-half.after{background:var(--teal-soft);}
+  .ba-half.after p{color:#2A4A54;}
+  .ba-mid{display:flex;align-items:center;padding:0 6px;color:#C7CBD1;font-size:19px;background:var(--wash);}
+  @media (max-width:760px){ .ba-strip{grid-template-columns:1fr;} .ba-mid{display:none;} }
+
+  /* ---------- why different ---------- */
+  .why{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:8px;}
+  .wcard{background:#fff;border:1px solid var(--line);border-radius:12px;padding:28px 26px;position:relative;}
+  .wcard .wn{font-family:'Archivo',sans-serif;font-weight:800;font-size:12px;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--teal);margin-bottom:16px;}
+  .wcard h3{font-family:'Archivo',sans-serif;font-weight:700;font-size:17px;line-height:1.25;margin:0 0 11px;}
+  .wcard p{font-size:14px;line-height:1.65;color:var(--body);margin:0;}
+  .notline{margin-top:20px;padding-top:16px;border-top:1px solid var(--line-soft);font-size:13px;line-height:1.6;color:var(--mute);}
+  .notline b{color:var(--ink);font-weight:600;}
+  @media (max-width:900px){ .why{grid-template-columns:1fr;} }
+
+  /* ---------- chat animation ---------- */
+  .bub{opacity:0;transform:translateY(10px) scale(.985);transition:opacity .45s ease,transform .45s ease;}
+  .bub.shown{opacity:1;transform:none;}
+  .typing{display:flex;gap:4px;align-items:center;padding:14px 16px;background:var(--wash);
+    border:1px solid var(--line);border-radius:12px;border-bottom-left-radius:4px;align-self:flex-start;
+    opacity:0;transition:opacity .25s ease;}
+  .typing.shown{opacity:1;}
+  .typing i{width:6px;height:6px;border-radius:50%;background:#A9B2BB;display:block;animation:blink 1.3s infinite;}
+  .typing i:nth-child(2){animation-delay:.18s;} .typing i:nth-child(3){animation-delay:.36s;}
+  @keyframes blink{0%,60%,100%{opacity:.3;transform:translateY(0)}30%{opacity:1;transform:translateY(-2px)}}
+  @media (prefers-reduced-motion:reduce){ .bub{opacity:1;transform:none;} .typing{display:none;} }
+
+  /* ---------- book band ---------- */
+  .bookband{margin-top:16px;background:var(--ink);border-radius:14px;padding:40px 44px;
+    display:flex;align-items:center;gap:40px;flex-wrap:wrap;color:#fff;}
+  .bookband .cover{flex:none;width:146px;height:auto;border-radius:2px 5px 5px 2px;
+    box-shadow:0 18px 44px rgba(0,0,0,.45);display:block;}
+  .coverbox{flex:none;width:146px;height:196px;border-radius:2px 5px 5px 2px;position:relative;
+    background:linear-gradient(155deg,#1B2027,#0A0D11);border-left:6px solid var(--teal);
+    box-shadow:0 18px 44px rgba(0,0,0,.45);display:flex;flex-direction:column;justify-content:flex-end;padding:18px 16px;}
+  .coverbox .ct{font-family:'Archivo',sans-serif;font-weight:800;font-size:19px;line-height:1.1;letter-spacing:-.02em;}
+  .coverbox .cs{font-size:9.5px;line-height:1.35;color:#8B949E;margin-top:8px;}
+  .bookband .bwrap{flex:1;min-width:280px;}
+  .bookband .bk{font-size:10.5px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--teal);}
+  .bookband h3{font-family:'Archivo',sans-serif;font-weight:800;font-size:27px;letter-spacing:-.03em;
+    line-height:1.15;margin:12px 0 6px;color:#fff;}
+  .bookband .sub{font-size:13px;color:#8B949E;margin-bottom:16px;}
+  .bookband p{font-size:14.5px;line-height:1.65;color:#C4CAD1;margin:0 0 20px;max-width:62ch;}
+  .dashfw{display:flex;gap:8px;flex-wrap:wrap;}
+  .dashfw span{font-size:12px;font-weight:600;padding:9px 14px;border:1px solid #2A3138;border-radius:6px;color:#D4D9DE;background:#12161B;}
+  .dashfw span b{color:var(--teal);font-weight:800;margin-right:6px;}
+  @media (max-width:720px){ .bookband{padding:30px 26px;gap:26px;} }
+
+  /* ---------- two ways in ---------- */
+  .ways{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+  .way{border-radius:14px;padding:34px 32px;display:flex;flex-direction:column;}
+  .way.free{background:#fff;border:1px solid var(--line);}
+  .way.paid{background:var(--ink);border:1px solid var(--ink);color:#fff;}
+  .way .wk{font-size:10.5px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;margin-bottom:14px;}
+  .way.free .wk{color:var(--teal-deep);} .way.paid .wk{color:var(--teal);}
+  .way h3{font-family:'Archivo',sans-serif;font-weight:800;font-size:25px;letter-spacing:-.03em;margin:0 0 12px;line-height:1.12;}
+  .way.paid h3{color:#fff;}
+  .way > p{font-size:14.5px;line-height:1.65;margin:0 0 20px;}
+  .way.free > p{color:var(--body);} .way.paid > p{color:#B9C0C8;}
+  .wlist{list-style:none;margin:0 0 26px;padding:0;display:flex;flex-direction:column;gap:9px;flex:1;}
+  .wlist li{font-size:13.5px;line-height:1.5;padding-left:22px;position:relative;}
+  .way.free .wlist li{color:var(--body);} .way.paid .wlist li{color:#D4D9DE;}
+  .wlist li:before{content:"";position:absolute;left:0;top:6px;width:11px;height:7px;
+    border-left:2px solid var(--teal);border-bottom:2px solid var(--teal);transform:rotate(-45deg);}
+  .wnote{font-size:12px;margin-top:14px;}
+  .way.free .wnote{color:var(--mute);} .way.paid .wnote{color:#8B949E;}
+  @media (max-width:860px){ .ways{grid-template-columns:1fr;} }
+
+  /* ---------- included grid ---------- */
+  .kit{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+  .kititem{background:#fff;border:1px solid var(--line);border-radius:12px;padding:22px 22px 20px;
+    display:flex;flex-direction:column;}
+  .kititem .top{display:flex;align-items:baseline;gap:9px;margin-bottom:12px;}
+  .kititem .q{font-family:'Archivo',sans-serif;font-weight:800;font-size:30px;letter-spacing:-.04em;line-height:1;color:var(--ink);}
+  .kititem .q.word{font-size:19px;letter-spacing:-.02em;color:var(--teal-deep);}
+  .kititem .u{font-size:10px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--mute);}
+  .kititem .kn{font-family:'Archivo',sans-serif;font-weight:700;font-size:15.5px;letter-spacing:-.01em;margin-bottom:7px;}
+  .kititem .kd{font-size:13px;line-height:1.55;color:var(--body);margin:0;}
+  .kittag{display:inline-block;font-size:9.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--teal);margin-bottom:14px;}
+  @media (max-width:980px){ .kit{grid-template-columns:repeat(2,1fr);} }
+  @media (max-width:640px){ .kit{grid-template-columns:1fr;} }
+
+  /* ---------- portability / privacy ---------- */
+  .facts{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:20px;}
+  .fact{background:#fff;border:1px solid var(--line);border-radius:12px;padding:26px 24px;}
+  .fact .fq{font-family:'Archivo',sans-serif;font-weight:700;font-size:15px;margin-bottom:11px;}
+  .fact p{font-size:13.5px;line-height:1.62;color:var(--body);margin:0;}
+  .fact p strong{color:var(--ink);font-weight:600;}
+  @media (max-width:900px){ .facts{grid-template-columns:1fr;} }
+
+  /* ---------- dashboards ---------- */
+  .dash-deck{position:relative;display:flex;justify-content:center;align-items:flex-start;gap:20px;padding:10px 0 0;}
+  .dash{background:#fff;border:1px solid var(--line);border-radius:11px;padding:16px;box-shadow:0 14px 40px rgba(10,10,10,.07);flex:1;min-width:0;}
+  .dash.side{transform:perspective(1400px) rotateY(13deg) scale(.93);opacity:.62;}
+  .dash.side.r{transform:perspective(1400px) rotateY(-13deg) scale(.93);}
+  .dash-h{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;}
+  .dash-h .t{font-family:'Archivo',sans-serif;font-weight:700;font-size:13.5px;}
+  .dash-h .tag{font-size:9.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--mute);}
+  .kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px;}
+  .kpi{border:1px solid var(--line);border-radius:7px;padding:9px 10px;}
+  .kpi .kl{font-size:9px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--mute);margin-bottom:5px;}
+  .kpi .kv{font-family:'Archivo',sans-serif;font-weight:800;font-size:15px;letter-spacing:-.02em;}
+  .kpi .kd{font-size:9.5px;font-weight:600;margin-top:3px;color:var(--teal-deep);}
+  .kpi .kd.warn{color:#B4472E;}
+  .bars{display:flex;align-items:flex-end;gap:4px;height:66px;padding-top:6px;border-top:1px solid var(--line-soft);}
+  .bars i{flex:1;background:var(--teal);border-radius:2px 2px 0 0;opacity:.85;display:block;}
+  .bars i.alt{background:var(--cream);border:1px solid var(--teal);}
+  .dash-foot{margin-top:11px;font-size:10px;color:var(--mute);}
+  @media (max-width:1000px){ .dash.side{display:none;} }
+
+  /* ---------- calendar / cadence ---------- */
+  .cal{background:#fff;border:1px solid var(--line);border-radius:12px;overflow:hidden;}
+  .cal-h{display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid var(--line);}
+  .cal-h div{padding:14px 18px;font-size:10.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--mute);border-right:1px solid var(--line);}
+  .cal-h div:last-child{border-right:none;}
+  .cal-b{display:grid;grid-template-columns:repeat(4,1fr);}
+  .cal-col{border-right:1px solid var(--line);padding:20px 18px;display:flex;flex-direction:column;gap:9px;min-height:210px;}
+  .cal-col:last-child{border-right:none;}
+  .cal-item{border:1px solid var(--line);border-left:3px solid var(--teal);border-radius:6px;padding:10px 12px;font-size:12.5px;line-height:1.45;}
+  .cal-item.soft{border-left-color:#D8DCE1;color:var(--body);}
+  .cal-item b{display:block;font-weight:600;font-size:12.5px;margin-bottom:3px;color:var(--ink);}
+  .cal-item span{color:var(--mute);font-size:11.5px;}
+  @media (max-width:900px){ .cal-h{display:none;} .cal-b{grid-template-columns:1fr;} .cal-col{border-right:none;border-bottom:1px solid var(--line);min-height:0;} }
+
+  /* ---------- interview ---------- */
+  .modules{display:flex;flex-wrap:wrap;gap:9px;justify-content:center;margin-top:34px;}
+  .mod{background:#fff;border:1px solid var(--line);border-radius:999px;padding:10px 18px;font-size:13.5px;font-weight:500;}
+  .mod b{font-weight:700;color:var(--teal-deep);margin-right:7px;}
+
+  .qa{background:#fff;border:1px solid var(--line);border-radius:12px;overflow:hidden;max-width:720px;margin:38px auto 0;}
+  .qa-h{padding:13px 20px;border-bottom:1px solid var(--line);font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--mute);}
+  .qa-b{padding:22px;display:flex;flex-direction:column;gap:14px;}
+  .bub{max-width:82%;padding:12px 15px;border-radius:12px;font-size:14px;line-height:1.55;}
+  .bub.q{background:var(--wash);border:1px solid var(--line);align-self:flex-start;border-bottom-left-radius:4px;}
+  .bub.a{background:var(--teal-soft);border:1px solid #CBE6EE;align-self:flex-end;border-bottom-right-radius:4px;}
+  .bub .who{display:block;font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--mute);margin-bottom:6px;}
+  .bub.wrote{background:#fff;border:1px dashed var(--teal);align-self:flex-start;font-size:12.5px;color:var(--teal-deep);font-weight:600;max-width:100%;}
+
+  /* ---------- cta ---------- */
+  .cta-final{background:var(--ink);color:#fff;border-radius:16px;padding:64px 48px;text-align:center;}
+  .cta-final h2{color:#fff;margin-bottom:16px;}
+  .cta-final p{font-size:16.5px;line-height:1.65;color:#B9C0C8;max-width:56ch;margin:0 auto 32px;}
+  .cta-row{display:flex;gap:13px;justify-content:center;flex-wrap:wrap;}
+  .btn{font-family:'Archivo',sans-serif;font-weight:700;font-size:14px;text-decoration:none;
+    padding:15px 30px;border-radius:7px;transition:transform .15s ease,background .18s ease;display:inline-block;}
+  .btn:hover{transform:translateY(-1px);}
+  .btn-teal{background:var(--teal);color:#0A0A0A;}
+  .btn-teal:hover{background:#65BBD1;}
+  .btn-ghost{background:transparent;color:#fff;border:1px solid #3A4048;}
+  .btn-ghost:hover{border-color:#fff;}
+
+  footer{border-top:1px solid var(--line);padding:30px 0;font-size:13px;color:var(--mute);
+    display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+  footer a{color:var(--mute);text-decoration:none;}
+  footer a:hover{color:var(--teal);}
+</style>
+</head>
+<body>
+
+<nav class="navbar">
+  <a class="nav-mark" href="index.html">The <span>Treasury</span> Mentor</a>
+  <div class="nav-links">
+    <a href="#why">Why it's different</a>
+    <a href="#map">The map</a>
+    <a href="#governance">How it thinks</a>
+    <a href="#interview">Your setup</a>
+    <a href="#included">What you get</a>
+  </div>
+  <a class="nav-cta" href="#waitlist">Join the waitlist</a>
+</nav>
+
+<div class="wrap">
+
+  <!-- ============ HERO ============ -->
+  <header class="hero">
+    <div class="eyebrow">The Treasury Mentor · Node Zero</div>
+    <h1>Build your own <span class="t">finance team</span></h1>
+    <div class="hero-cols">
+      <p class="lead">Node Zero is <strong>378 finance tasks across 8 departments</strong>, built the way a treasurer or controller actually works, not a prompt library. Each one reads your real policies, covenant definitions, and chart of accounts before it does anything, so the output is built on your numbers and your rules.</p>
+      <p class="lead">Most AI in finance is a chatbot bolted onto the same broken process. You still gather the inputs, still remember the covenant math, still catch what is missing. <strong>Node Zero doesn't guess.</strong> If a number isn't in your context base, it says so instead of inventing one.</p>
+      <p class="lead">It is not a replacement for what you run today. It is a layer on top of it. It works against the systems and structure you already have, so it scales with you: add an entity, a covenant, a reporting line, and <strong>every task touching it inherits the update.</strong></p>
+    </div>
+
+    <div class="statline">
+      <div class="st"><div class="n" id="t-tasks">&nbsp;</div><div class="l">tasks</div></div>
+      <div class="st"><div class="n">8</div><div class="l">departments</div></div>
+      <div class="st"><div class="n" id="t-branch">&nbsp;</div><div class="l">branches</div></div>
+      <div class="st"><div class="n">25</div><div class="l">context files</div></div>
+      <div class="note">One square below is one task. All of them read the same 25 context files before they run.</div>
+    </div>
+  </header>
+</div>
+
+<!-- ============ WHY DIFFERENT ============ -->
+<section id="why" class="sec-wash" style="padding:88px 0;">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="kick">Why this one is different</div>
+      <h2>Built by someone who <span class="ital">has to sign it.</span></h2>
+      <p>There is a lot of AI content aimed at finance right now. Almost none of it was written by anyone who has had to defend a number to a lender, a board, or an auditor. That is the whole difference here.</p>
+    </div>
+
+    <div class="why">
+      <div class="wcard rv d1">
+        <div class="wn">01 · Who built it</div>
+        <h3>A finance executive, not a content account</h3>
+        <p>Over eighteen years in senior finance roles, built in rooms with leaders who came out of Tesla, thyssenkrupp, Ford, General Motors and Blue Cross Blue Shield. That is the standard these were written to. Every task exists because the work behind it landed on my desk first.</p>
+      </div>
+      <div class="wcard rv d2">
+        <div class="wn">02 · What it is built on</div>
+        <h3>Real deliverables, not imagined ones</h3>
+        <p>Built from the outputs a finance function genuinely produces. Close packages and provision workpapers. Budgets, reforecasts and long range plans. Pricing and margin analysis. M&amp;A screening, valuation and diligence support. Board and strategy material. Cash and liquidity forecasting. Structured the way each one is really assembled.</p>
+      </div>
+      <div class="wcard rv d3">
+        <div class="wn">03 · Where the logic comes from</div>
+        <h3>Public standards, practice, and a lot of miles</h3>
+        <p>Published accounting and tax standards, established treasury and FP&amp;A practice, and hands on work across North America, Europe, Latin America and Asia, where the same close has to satisfy four sets of local expectations at once. Nothing proprietary sits in these files. No employer data, no client data, nothing confidential.</p>
+      </div>
+    </div>
+
+    <div class="wrap" style="padding:0;">
+      <p class="notline" style="max-width:78ch;margin-left:auto;margin-right:auto;text-align:center;border-top:none;padding-top:26px;font-size:14.5px;color:var(--body);">
+        These are not skills an influencer posted last week after reading a changelog. <b>Each one was written with the logic finance actually needs</b>, which is why they read your rules before they run and stop when something is missing.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ MAP ============ -->
+<section id="map" style="padding-top:88px;">
+  <div class="wrap">
+    <div class="stage">
+      <div class="canvas-shell">
+        <input id="search" type="search" placeholder="Search every task…" autocomplete="off">
+        <div class="crumbs" id="crumbs"></div>
+        <svg id="nerve" role="img" aria-label="A map of finance tasks branching from Node Zero into eight departments, each opening into branches, each opening into individual tasks.">
+          <g id="cam">
+            <g id="rings"></g>
+            <g id="wm"></g>
+            <g id="fibers"></g>
+            <g id="boutons"></g>
+            <g id="subnodes"></g>
+            <g id="deptnodes"></g>
+            <g id="core">
+              <circle class="soma" cx="0" cy="0" r="42"></circle>
+              <path class="soma-icon" d="M2 12 L6.2 7.6 L9.2 10 L14 3.6 M10.6 3.6 H14 V7" transform="translate(-9,-9) scale(1.3)"></path>
+            </g>
+          </g>
+        </svg>
+        <button class="demo-toggle" id="demoBtn" type="button"><span class="demo-dot"></span><span id="demoLbl">Auto tour</span></button>
+        <div class="hintline">click to go deeper · click the core to zoom back out</div>
+      </div>
+      <aside class="inspector" id="inspector" aria-live="polite"></aside>
+    </div>
+  </div>
+</section>
+
+<!-- ============ MARQUEE ============ -->
+<div class="marq-band sec-wash">
+  <div class="wrap">
+    <div class="sec-head" style="margin-bottom:38px;">
+      <div class="kick">Every task, by name</div>
+      <h2>Not categories. <span class="ital">The actual work.</span></h2>
+      <p>Nobody sells you a list this specific, because nobody has built it. This is a live slice of the library. Hover over it to hold it still.</p>
+    </div>
+  </div>
+  <div class="marq marq-a"><div class="marq-track" id="mq1"></div></div>
+  <div class="marq marq-b" style="margin-top:11px;"><div class="marq-track" id="mq2"></div></div>
+  <div class="marq marq-c" style="margin-top:11px;"><div class="marq-track" id="mq3"></div></div>
+</div>
+
+<!-- ============ GOVERNANCE ============ -->
+<section id="governance">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="kick">Governance, not vibes</div>
+      <h2>It reads the rules first. <span class="ital">Then it refuses to guess.</span></h2>
+      <p>This is the part that separates a finance agent from a chatbot. In treasury and accounting, being confidently wrong has consequences. A covenant computed from a textbook definition instead of your credit agreement can show a pass that is not there.</p>
+    </div>
+
+    <div class="flow">
+      <div class="flow-step rv d1">
+        <div class="flow-viz">
+          <svg viewBox="0 0 200 96" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+            <rect class="fv-file lit" x="14" y="10" width="30" height="15" rx="2.5"/>
+            <rect class="fv-file lit" x="14" y="31" width="30" height="15" rx="2.5"/>
+            <rect class="fv-file lit" x="14" y="52" width="30" height="15" rx="2.5"/>
+            <rect class="fv-file lit" x="14" y="73" width="30" height="15" rx="2.5"/>
+            <path class="fv-line teal" d="M46 17.5 C 90 17.5, 100 48, 132 48"/>
+            <path class="fv-line teal" d="M46 38.5 C 90 38.5, 100 48, 132 48"/>
+            <path class="fv-line teal" d="M46 59.5 C 90 59.5, 100 48, 132 48"/>
+            <path class="fv-line teal" d="M46 80.5 C 90 80.5, 100 48, 132 48"/>
+            <circle class="fv-node" cx="148" cy="48" r="15"/>
+            <path d="M143 48 l3.4 3.4 L154 44" fill="none" stroke="#2E7E93" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            <text class="fv-txt on" x="14" y="6">YOUR RULES</text>
+          </svg>
+        </div>
+        <div class="sn">Step 01 · Read</div>
+        <h3>Governing rules load before anything runs</h3>
+        <p>Covenant definitions captured clause by clause from your agreement. Approval thresholds. Investment policy limits. Your KPI builds, not generic ones. The task reads them as constraints, not as suggestions.</p>
+        <div class="nxt">&rsaquo;</div>
+      </div>
+
+      <div class="flow-step rv d2">
+        <div class="flow-viz">
+          <svg viewBox="0 0 200 96" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+            <rect class="fv-file" x="26" y="10" width="148" height="76" rx="4"/>
+            <rect class="fv-fillbar" x="38" y="22" width="84" height="9" rx="2"/>
+            <text class="fv-txt on" x="130" y="29.5">OK</text>
+            <rect class="fv-fillbar" x="38" y="38" width="102" height="9" rx="2"/>
+            <text class="fv-txt on" x="148" y="45.5">OK</text>
+            <rect class="fv-blank" x="38" y="54" width="66" height="9" rx="2"/>
+            <text class="fv-txt" x="112" y="61.5" style="fill:#B4472E">MISSING</text>
+            <rect class="fv-fillbar" x="38" y="70" width="92" height="9" rx="2"/>
+            <text class="fv-txt on" x="138" y="77.5">OK</text>
+            <circle class="fv-halt" cx="104" cy="58.5" r="0"/>
+          </svg>
+        </div>
+        <div class="sn">Step 02 · Check</div>
+        <h3>A missing input is named, never filled</h3>
+        <p>The prime directive of the whole system is that it never assumes an input. If a figure is not in your base, the task names it, tells you which file it belongs in, and points at the task that can produce it, rather than handing back a clean looking number nobody can trace.</p>
+        <div class="nxt">&rsaquo;</div>
+      </div>
+
+      <div class="flow-step rv d3">
+        <div class="flow-viz">
+          <svg viewBox="0 0 200 96" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+            <circle class="fv-node" cx="42" cy="42" r="15"/>
+            <path d="M37 42 l3.4 3.4 L48 38" fill="none" stroke="#2E7E93" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            <path class="fv-line teal" d="M59 42 H 118" marker-end="url(#ar)"/>
+            <defs><marker id="ar" markerWidth="7" markerHeight="7" refX="5.5" refY="3" orient="auto"><path d="M0 0 L6 3 L0 6 z" fill="#4CABC4"/></marker></defs>
+            <rect class="fv-file lit" x="124" y="20" width="44" height="44" rx="3"/>
+            <path class="fv-line" d="M132 32 H160 M132 40 H160 M132 48 H152"/>
+            <path class="fv-line teal" d="M146 70 C 146 86, 42 88, 42 61" marker-end="url(#ar)" stroke-dasharray="3 3"/>
+            <text class="fv-txt on" x="124" y="14">WORKPAPER</text>
+          </svg>
+        </div>
+        <div class="sn">Step 03 · Write back</div>
+        <h3>Output becomes context for the next run</h3>
+        <p>Work products land in your workpapers and update the current state, so the next task starts from what the last one produced. Conflicts between files get surfaced rather than quietly resolved.</p>
+      </div>
+    </div>
+
+    <div class="cov">
+      <div class="cov-h"><span>Sample behaviour · Quarterly covenant test</span><span>Illustrative figures</span></div>
+
+      <div class="cov-reads">
+        <span class="rl">Reads first</span>
+        <span class="fchip">Debt &amp; Covenants</span>
+        <span class="fchip">Reporting Conventions</span>
+        <span class="fchip">Historical Baseline</span>
+        <span class="fchip">Entities</span>
+      </div>
+
+      <div class="cov-body">
+        <div class="cov-cell">
+          <div class="cn">INTEREST COVERAGE RATIO</div>
+          <div class="cf">EBITDA ÷ interest expense</div>
+          <div class="cov-val"><span class="v">4.81x</span><span class="badge pass">Produced</span></div>
+          <div class="cov-thr">Covenant minimum 3.00x · 60% headroom</div>
+          <div class="gauge">
+            <div class="fillbar" style="width:80.2%"></div>
+            <div class="thr" style="left:50%"></div>
+          </div>
+          <div class="gauge-l"><span>0.00x</span><span>covenant floor 3.00x</span><span>6.00x</span></div>
+          <div class="cov-lines">
+            <div class="cov-line"><span class="k">LTM EBITDA</span><span class="n">128.4</span></div>
+            <div class="cov-line"><span class="k">LTM interest expense</span><span class="n">26.7</span></div>
+            <div class="cov-line"><span class="k">Add-backs applied</span><span class="n">7 of 7</span></div>
+          </div>
+        </div>
+
+        <div class="cov-cell">
+          <div class="cn">DEBT SERVICE COVERAGE RATIO</div>
+          <div class="cf">CFADS ÷ total debt service</div>
+          <div class="cov-val"><span class="v">2.91x</span><span class="badge pass">Produced</span></div>
+          <div class="cov-thr">Covenant minimum 1.25x · 133% headroom</div>
+          <div class="gauge">
+            <div class="fillbar" style="width:72.8%"></div>
+            <div class="thr" style="left:31.3%"></div>
+          </div>
+          <div class="gauge-l"><span>0.00x</span><span>covenant floor 1.25x</span><span>4.00x</span></div>
+          <div class="cov-lines">
+            <div class="cov-line"><span class="k">CFADS</span><span class="n">112.6</span></div>
+            <div class="cov-line"><span class="k">Interest component</span><span class="n">26.7</span></div>
+            <div class="cov-line"><span class="k">Scheduled principal, next 4 quarters</span><span class="n">12.0</span></div>
+            <div class="cov-line" style="border-top:1px solid var(--line-soft);padding-top:10px;margin-top:2px;"><span class="k" style="color:var(--teal-deep);font-weight:600;">Total debt service</span><span class="n" style="color:var(--teal-deep);">38.7</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ba-strip">
+        <div class="ba-half before">
+          <div class="bl">Before the base existed</div>
+          <p>Debt service coverage was the one nobody wanted. The amortisation profile lived in a lender spreadsheet, the EBITDA build lived in someone's head, and the ratio got reassembled from scratch every quarter. Two analysts, three days, and a number that changed depending on who built it.</p>
+        </div>
+        <div class="ba-mid">&rsaquo;</div>
+        <div class="ba-half after">
+          <div class="bl">After the base existed</div>
+          <p>The amortisation schedule and the add-back caps were captured once, during the interview. Now both ratios compute from the same source in one pass, they agree with each other because they read the same figures, and the workpaper shows every input it used.</p>
+        </div>
+      </div>
+
+      <div class="cov-foot">
+        Both ratios are produced here because everything they need was captured. That is the point of the base. <b>If something is missing, the task says so and names the file it belongs in</b>, rather than assuming a straight line amortisation and handing back a ratio that looks fine. A number you cannot trace is worse than no number at all, and in a covenant test it is the difference between a pass and a default.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ WORK / BEFORE-AFTER ============ -->
+<section class="sec-wash">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="kick">Where the line sits</div>
+      <h2>The assembly gets automated. <span class="ital">The judgment stays with you.</span></h2>
+      <p>Break any recurring deliverable into the steps it actually takes. Most of them are assembly: pulling, matching, computing, formatting. A few are judgment. <strong>Node Zero takes the first kind and hands you the second, faster and with the work already shown.</strong></p>
+    </div>
+
+    <div class="legend">
+      <div><span class="sw a"></span> The task runs it</div>
+      <div><span class="sw y"></span> Stays with you</div>
+    </div>
+
+    <div class="pipe">
+      <div class="pipe-h"><h3>Quarterly covenant package</h3><div class="meta">8 steps · 2 stay with you</div></div>
+      <div class="steps">
+        <div class="step auto"><span class="st-l">Task</span>Read facility terms</div>
+        <div class="step auto"><span class="st-l">Task</span>Build EBITDA to the clause</div>
+        <div class="step auto"><span class="st-l">Task</span>Apply add-back caps</div>
+        <div class="step auto"><span class="st-l">Task</span>Compute the ratios</div>
+        <div class="step auto"><span class="st-l">Task</span>Test forward step-downs</div>
+        <div class="step you"><span class="st-l">You</span>Judge the ambiguous clause</div>
+        <div class="step auto"><span class="st-l">Task</span>Draft the certificate</div>
+        <div class="step you"><span class="st-l">You</span>Sign it</div>
+      </div>
+    </div>
+
+    <div class="pipe">
+      <div class="pipe-h"><h3>13-week cash forecast</h3><div class="meta">7 steps · 2 stay with you</div></div>
+      <div class="steps">
+        <div class="step auto"><span class="st-l">Task</span>Pull and reconcile balances</div>
+        <div class="step auto"><span class="st-l">Task</span>Weekly IS per entity</div>
+        <div class="step auto"><span class="st-l">Task</span>AR / AP / inventory rollforward</div>
+        <div class="step auto"><span class="st-l">Task</span>Build the 13 weeks</div>
+        <div class="step auto"><span class="st-l">Task</span>Consolidate and translate FX</div>
+        <div class="step you"><span class="st-l">You</span>Challenge the assumptions</div>
+        <div class="step you"><span class="st-l">You</span>Own it in the room</div>
+      </div>
+    </div>
+
+    <div class="pipe">
+      <div class="pipe-h"><h3>Month-end close package</h3><div class="meta">7 steps · 2 stay with you</div></div>
+      <div class="steps">
+        <div class="step auto"><span class="st-l">Task</span>Run the readiness check</div>
+        <div class="step auto"><span class="st-l">Task</span>Draft and trend accruals</div>
+        <div class="step auto"><span class="st-l">Task</span>Match JE support</div>
+        <div class="step auto"><span class="st-l">Task</span>Detect the flux</div>
+        <div class="step you"><span class="st-l">You</span>Explain the real driver</div>
+        <div class="step auto"><span class="st-l">Task</span>Assemble the package</div>
+        <div class="step you"><span class="st-l">You</span>Approve and release</div>
+      </div>
+    </div>
+
+    <div class="pipe" style="margin-bottom:0;">
+      <div class="pipe-h"><h3>Lender reporting</h3><div class="meta">6 steps · 2 stay with you</div></div>
+      <div class="steps">
+        <div class="step auto"><span class="st-l">Task</span>Track what's owed and when</div>
+        <div class="step auto"><span class="st-l">Task</span>Pull the reporting figures</div>
+        <div class="step auto"><span class="st-l">Task</span>Populate the forms</div>
+        <div class="step auto"><span class="st-l">Task</span>Tie out to the statements</div>
+        <div class="step you"><span class="st-l">You</span>Review the exceptions</div>
+        <div class="step you"><span class="st-l">You</span>Submit to the agent</div>
+      </div>
+    </div>
+
+    <p style="text-align:center;font-size:15px;line-height:1.65;color:var(--body);margin:32px auto 0;max-width:66ch;">
+      Every dark block is a judgment call. That was always the real job. The rest was overhead you were carrying because nobody had taken it off you.
+    </p>
+  </div>
+</section>
+
+<!-- ============ DASHBOARDS ============ -->
+<section id="dashboards">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="kick">And what it reports into</div>
+      <h2>The tasks run. <span class="ital">The dashboards show it.</span></h2>
+      <p>Every task writes back, so the picture stays current instead of being rebuilt for the meeting. Three views a CFO actually asks for, and they tie to each other, because they read the same base.</p>
+    </div>
+
+    <div class="dash-stack">
+
+      <!-- ---- board 1 ---- -->
+      <div class="dpanel on" data-p="0">
+        <div class="board">
+          <div class="board-h">
+            <div><div class="bt">Liquidity &amp; 13-Week Cash</div><div class="bs">Consolidated · all entities · FX at policy rate · week ending 12 Sep</div></div>
+            <div class="bmeta">Refreshed weekly</div>
+          </div>
+          <div class="krow">
+            <div class="kc"><div class="kl">Opening cash</div><div class="kv">48.2</div><div class="kd">reconciled to bank</div></div>
+            <div class="kc"><div class="kl">Week-13 close</div><div class="kv">41.7</div><div class="kd warn">−6.5 over horizon</div></div>
+            <div class="kc"><div class="kl">Trough balance</div><div class="kv">37.9</div><div class="kd warn">week 9</div></div>
+            <div class="kc"><div class="kl">Revolver drawn</div><div class="kv">25.0</div><div class="kd flat">of 80.0 committed</div></div>
+            <div class="kc"><div class="kl">Total liquidity</div><div class="kv">96.7</div><div class="kd">cash + undrawn</div></div>
+            <div class="kc"><div class="kl">Min-cash cushion</div><div class="kv">7.9</div><div class="kd">above 30.0 policy</div></div>
+          </div>
+          <div class="bgrid">
+            <div class="bcell">
+              <div class="bh">Closing cash by week</div>
+              <div class="bsub">$m · weeks 1 to 13 · trough flagged</div>
+              <div class="chart">
+                <div class="col"><b style="height:81.9%"></b><i>1</i></div>
+                <div class="col"><b style="height:73.8%"></b><i>2</i></div>
+                <div class="col"><b style="height:80.6%"></b><i>3</i></div>
+                <div class="col"><b style="height:63.8%"></b><i>4</i></div>
+                <div class="col"><b style="height:53.8%"></b><i>5</i></div>
+                <div class="col"><b style="height:61.3%"></b><i>6</i></div>
+                <div class="col"><b style="height:43.8%"></b><i>7</i></div>
+                <div class="col"><b style="height:32.5%"></b><i>8</i></div>
+                <div class="col"><em>37.9</em><b class="low" style="height:24.4%"></b><i>9</i></div>
+                <div class="col"><b style="height:30.0%"></b><i>10</i></div>
+                <div class="col"><b style="height:38.1%"></b><i>11</i></div>
+                <div class="col"><b style="height:43.1%"></b><i>12</i></div>
+                <div class="col"><b class="fc" style="height:48.1%"></b><i>13</i></div>
+              </div>
+            </div>
+            <div class="bcell">
+              <div class="bh">Where the liquidity sits</div>
+              <div class="bsub">$m · at week 13</div>
+              <div class="hbars">
+                <div class="hb"><div class="hbl"><span>Cash on hand</span><span class="n">41.7</span></div><div class="track"><i style="width:43.1%"></i></div></div>
+                <div class="hb"><div class="hbl"><span>Undrawn revolver</span><span class="n">55.0</span></div><div class="track"><i style="width:56.9%"></i></div></div>
+                <div class="hb"><div class="hbl"><span>Minimum cash policy</span><span class="n">(30.0)</span></div><div class="track"><i class="neg" style="width:31.0%"></i></div></div>
+                <div class="hb"><div class="hbl"><span>Trapped / restricted</span><span class="n">(6.4)</span></div><div class="track"><i class="amb" style="width:6.6%"></i></div></div>
+                <div class="hb" style="border-top:1px solid var(--line);padding-top:13px;"><div class="hbl"><span style="font-weight:600;color:var(--ink)">Freely deployable</span><span class="n">60.3</span></div><div class="track"><i style="width:62.4%"></i></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ---- board 2 ---- -->
+      <div class="dpanel" data-p="1">
+        <div class="board">
+          <div class="board-h">
+            <div><div class="bt">Working Capital</div><div class="bs">LTM revenue 1,445.4 · LTM COGS 1,264.0 · days on a 365-day basis</div></div>
+            <div class="bmeta">Refreshed monthly</div>
+          </div>
+          <div class="krow">
+            <div class="kc"><div class="kl">DSO</div><div class="kv">54.2</div><div class="kd warn">+2.1 vs prior</div></div>
+            <div class="kc"><div class="kl">DIO</div><div class="kv">48.6</div><div class="kd warn">+0.7 vs prior</div></div>
+            <div class="kc"><div class="kl">DPO</div><div class="kv">61.8</div><div class="kd">+3.4 vs prior</div></div>
+            <div class="kc"><div class="kl">Cash conv. cycle</div><div class="kv">41.0</div><div class="kd">−0.6 vs prior</div></div>
+            <div class="kc"><div class="kl">Net working capital</div><div class="kv">168.9</div><div class="kd flat">AR + inv − AP</div></div>
+            <div class="kc"><div class="kl">NWC / revenue</div><div class="kv">11.7%</div><div class="kd">−0.1pt</div></div>
+          </div>
+          <div class="bgrid">
+            <div class="bcell">
+              <div class="bh">Cash conversion cycle, how it builds</div>
+              <div class="bsub">days · DSO + DIO − DPO</div>
+              <div class="ccc">
+                <div class="seg"><div class="sv">54.2</div><div class="sl">DSO</div></div>
+                <div class="op">+</div>
+                <div class="seg"><div class="sv">48.6</div><div class="sl">DIO</div></div>
+                <div class="op">−</div>
+                <div class="seg"><div class="sv">61.8</div><div class="sl">DPO</div></div>
+                <div class="op">=</div>
+                <div class="seg res"><div class="sv">41.0</div><div class="sl">CCC</div></div>
+              </div>
+              <div style="margin-top:20px;font-size:12.5px;line-height:1.6;color:var(--body);border-top:1px solid var(--line-soft);padding-top:14px;">
+                The cycle came down 0.6 days, but not for a good reason. Receivables slipped 2.1 days and inventory added 0.7, so the operating side got worse by 2.8. The entire improvement came from stretching payables 3.4 days. <strong style="color:var(--ink)">The commentary says exactly that, because the drivers are computed rather than eyeballed.</strong>
+              </div>
+            </div>
+            <div class="bcell">
+              <div class="bh">Balance sheet components</div>
+              <div class="bsub">$m · period end</div>
+              <div class="hbars">
+                <div class="hb"><div class="hbl"><span>Trade receivables</span><span class="n">214.6</span></div><div class="track"><i style="width:100%"></i></div></div>
+                <div class="hb"><div class="hbl"><span>Inventory</span><span class="n">168.3</span></div><div class="track"><i style="width:78.4%"></i></div></div>
+                <div class="hb"><div class="hbl"><span>Trade payables</span><span class="n">(214.0)</span></div><div class="track"><i class="neg" style="width:99.7%"></i></div></div>
+                <div class="hb" style="border-top:1px solid var(--line);padding-top:13px;"><div class="hbl"><span style="font-weight:600;color:var(--ink)">Net working capital</span><span class="n">168.9</span></div><div class="track"><i style="width:78.7%"></i></div></div>
+                <div class="hb"><div class="hbl"><span>Overdue &gt; 60 days</span><span class="n">18.7</span></div><div class="track"><i class="amb" style="width:8.7%"></i></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ---- board 3 ---- -->
+      <div class="dpanel" data-p="2">
+        <div class="board">
+          <div class="board-h">
+            <div><div class="bt">Debt &amp; Covenant Position</div><div class="bs">Total debt 247.0 · cash 41.7 · LTM EBITDA 128.4 · tested quarterly</div></div>
+            <div class="bmeta">Refreshed quarterly</div>
+          </div>
+          <div class="krow">
+            <div class="kc"><div class="kl">Net debt</div><div class="kv">205.3</div><div class="kd flat">247.0 gross − cash</div></div>
+            <div class="kc"><div class="kl">Net leverage</div><div class="kv">1.60x</div><div class="kd">vs 3.50x max</div></div>
+            <div class="kc"><div class="kl">Interest cover</div><div class="kv">4.81x</div><div class="kd">vs 3.00x min</div></div>
+            <div class="kc"><div class="kl">DSCR</div><div class="kv">2.91x</div><div class="kd">vs 1.25x min</div></div>
+            <div class="kc"><div class="kl">Undrawn</div><div class="kv">55.0</div><div class="kd">revolver</div></div>
+            <div class="kc"><div class="kl">WA cost of debt</div><div class="kv">6.4%</div><div class="kd flat">blended</div></div>
+          </div>
+          <div class="bgrid">
+            <div class="bcell">
+              <div class="bh">Maturity wall</div>
+              <div class="bsub">$m · contractual repayments by year · total 247.0</div>
+              <div class="chart">
+                <div class="col"><em>12.0</em><b style="height:6.3%"></b><i>2026</i></div>
+                <div class="col"><em>18.0</em><b style="height:9.4%"></b><i>2027</i></div>
+                <div class="col"><em>25.0</em><b style="height:13.0%"></b><i>2028</i></div>
+                <div class="col"><em>192.0</em><b class="low" style="height:100%"></b><i>2029</i></div>
+              </div>
+              <div style="margin-top:16px;font-size:12.5px;line-height:1.6;color:var(--body);border-top:1px solid var(--line-soft);padding-top:14px;">
+                78% of the stack lands in a single year. <strong style="color:var(--ink)">That's the refinancing conversation, and it's visible three years early.</strong>
+              </div>
+            </div>
+            <div class="bcell">
+              <div class="bh">Covenant headroom</div>
+              <div class="bsub">against tested thresholds</div>
+              <div class="hbars">
+                <div class="hb"><div class="hbl"><span>Net leverage · 1.60x of 3.50x</span><span class="n">54% clear</span></div><div class="track"><i style="width:45.7%"></i></div></div>
+                <div class="hb"><div class="hbl"><span>Interest cover · 4.81x of 3.00x</span><span class="n">60% above</span></div><div class="track"><i style="width:80.2%"></i></div></div>
+                <div class="hb"><div class="hbl"><span>DSCR · 2.91x of 1.25x</span><span class="n">133% above</span></div><div class="track"><i style="width:72.8%"></i></div></div>
+                <div class="hb" style="border-top:1px solid var(--line);padding-top:13px;"><div class="hbl"><span style="font-weight:600;color:var(--ink)">Next step-down · Q2 2027</span><span class="n">3.25x</span></div><div class="track"><i class="amb" style="width:49.2%"></i></div></div>
+              </div>
+              <div style="margin-top:18px;font-size:12.5px;line-height:1.6;color:var(--body);">
+                All three ratios read the same EBITDA build, the same net debt figure and the same amortisation schedule, so they agree with each other by construction. <strong style="color:var(--ink)">Three covenants that disagree is a reconciliation problem you should never have to have.</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="dots">
+      <button class="dot on" data-d="0" aria-label="Liquidity and cash"></button>
+      <button class="dot" data-d="1" aria-label="Working capital"></button>
+      <button class="dot" data-d="2" aria-label="Debt and covenants"></button>
+    </div>
+    <div class="dnames">
+      <button class="dname on" data-d="0">Liquidity &amp; cash</button>
+      <button class="dname" data-d="1">Working capital</button>
+      <button class="dname" data-d="2">Debt &amp; covenants</button>
+    </div>
+    <p style="text-align:center;font-size:11.5px;color:var(--mute);margin-top:22px;">Illustrative figures. Internally consistent, but not a real company.</p>
+  </div>
+</section>
+
+<!-- ============ INTERVIEW ============ -->
+<section id="interview" class="sec-wash">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="kick">Start here · everything else depends on it</div>
+      <h2>Built on your inputs, <span class="ital">tailored to how you work.</span></h2>
+      <p>378 tasks are worth very little if they have to guess at how you work. So Node Zero is not the tasks. <strong>Node Zero is the base underneath them</strong>, and building it is the first thing that happens. Five guided modules, 25 files, one field at a time, nothing invented on your behalf. Nothing is uploaded anywhere and nothing is shared. The answers become files that sit on your side, and you decide how much detail goes into them.</p>
+    </div>
+
+    <div class="grid-3">
+      <div class="card">
+        <div class="ico"><svg viewBox="0 0 16 16"><path d="M2.5 3.5H13.5V10.2H6.7L4.2 12.6V10.2H2.5Z"/></svg></div>
+        <h3>It asks. You answer.</h3>
+        <p>One field per turn, in plain language, in whatever order suits you. Where a field does not apply you mark it N/A deliberately, so a later task knows it was considered rather than skipped. Stop mid-way and pick it up next week; it resumes where you left off and shows you what's still open.</p>
+      </div>
+      <div class="card">
+        <div class="ico"><svg viewBox="0 0 16 16"><path d="M4.5 2H9.5L12 4.5V14H4.5Z M9.5 2V4.5H12"/></svg></div>
+        <h3>Answers become files, immediately.</h3>
+        <p>Every confirmed answer is written into the relevant context file as you go: your entities, chart of accounts, banking, facilities, policies, close calendar, current state. You can open any of them in a text editor and read exactly what it knows about you. No black box, and no database somewhere else holding it.</p>
+      </div>
+      <div class="card">
+        <div class="ico"><svg viewBox="0 0 16 16"><path d="M3 8.3L6.2 11.3L13 4.2"/></svg></div>
+        <h3>Then every task reads it.</h3>
+        <p>From that point the base is the thing that makes the library yours rather than generic. The test that it worked is not a score. It is this: <strong>a finance professional who has never seen your operation could read that folder and act correctly for you tomorrow.</strong></p>
+      </div>
+    </div>
+
+    <div class="modules">
+      <div class="mod"><b>01</b> Identity</div>
+      <div class="mod"><b>02</b> Systems &amp; Data</div>
+      <div class="mod"><b>03</b> Financial Structure</div>
+      <div class="mod"><b>04</b> Policy</div>
+      <div class="mod"><b>05</b> State</div>
+    </div>
+
+    <div class="qa">
+      <div class="qa-h">Node Zero intake · state &amp; history · building the cash forecast base</div>
+      <div class="qa-b">
+        <div class="bub q"><span class="who">Node Zero</span>For the 13-week forecast I need to know how your receivables actually convert, not a blended DSO. Do you have a collection curve by entity? Roughly what share lands inside 30 days, then 31 to 60, then 61 to 90?</div>
+        <div class="bub a"><span class="who">You</span>US, Germany and Mexico all behave about the same. Call it 62% inside 30 days, 28% in the 31 to 60 bucket, 8% in 61 to 90. Romania is much slower and I would have to pull the detail.</div>
+        <div class="bub q"><span class="who">Node Zero</span>Captured for US, Germany and Mexico. That adds to 98%, so I am carrying the remaining 2% into 90 plus unless you tell me otherwise. Romania stays open. The forecast will still run, and it will show Romania as unmodelled rather than applying the US curve to it.</div>
+        <div class="bub wrote">Written to Historical Baseline · AR collection curves · 3 entities set · 1 open · US curve NOT applied to Romania</div>
+        <div class="bub a"><span class="who">You</span>That's right. Romania usually runs past 90 days but I don't want to guess the split.</div>
+        <div class="bub q"><span class="who">Node Zero</span>Then I will leave it open rather than write "90 plus" as though it were measured. It goes on the open items list, so it surfaces every time you run the forecast until you close it.</div>
+      </div>
+    </div>
+
+    <div class="sec-head" style="margin:76px auto 0;max-width:720px;">
+      <div class="kick">The questions people actually ask</div>
+      <h2 style="font-size:clamp(24px,3vw,34px);">Where it runs, and who sees your numbers.</h2>
+    </div>
+
+    <div class="facts">
+      <div class="fact">
+        <div class="fq">Does this only work with Claude?</div>
+        <p>No. The library is plain text. There is no software to install and nothing to lock you in. It runs wherever your AI can read a folder of files you hand it, which today means Claude, ChatGPT, Gemini or Copilot in the workspace tiers your company has already approved. Claude is what I build and test on, so that is the smoothest path, but the files are not tied to it.</p>
+      </div>
+      <div class="fact">
+        <div class="fq">Does the model learn from my data?</div>
+        <p>That is governed by your contract with your AI provider, not by these files. On business, enterprise and API tiers the major providers exclude customer content from training. Anthropic's commercial terms say so explicitly, and OpenAI and Google draw the same line. On personal consumer plans it is a setting you control. Worth a five minute check with your IT team before you load anything real.</p>
+      </div>
+      <div class="fact">
+        <div class="fq">What do you see?</div>
+        <p>Nothing. There is no platform here, no account, and no server of mine anywhere in the path. You get files, they sit in your environment, and your numbers never leave it. That is a deliberate choice. A finance professional should not have to hand their numbers to a vendor to get value out of them.</p>
+      </div>
+    </div>
+
+    <p style="text-align:center;font-size:15.5px;line-height:1.7;color:var(--body);margin:40px auto 0;max-width:64ch;">
+      Most people run the interview themselves, and it is built to be self serve. If you would rather not, I run it with you. A working session where I ask the questions and your base gets built properly the first time, by someone who has filled one of these in anger.
+    </p>
+  </div>
+</section>
+
+<!-- ============ WHAT'S INCLUDED ============ -->
+<section id="included">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="kick">What you actually get</div>
+      <h2>Everything in the box.</h2>
+      <p>No tiers to decode and no feature grid. One library, one base, one set of guardrails, and a person on the other end of it.</p>
+    </div>
+
+    <div class="kit">
+
+      <div class="kititem">
+        <div class="top"><span class="q">11</span><span class="u">linked tasks</span></div>
+        <div class="kn">The forecast engine</div>
+        <p class="kd">Weekly P&amp;L, AR/AP/inventory rollforward, 13 and 52 week cash, consolidation, FX, and forward covenant testing. They hand off to each other rather than sitting in a folder.</p>
+      </div>
+
+      <div class="kititem">
+        <div class="top"><span class="q">43</span><span class="u">tasks</span></div>
+        <div class="kn">The deal engine</div>
+        <p class="kd">Target screening, valuation and LBO modeling, synergy work, diligence support, red flag review, IC memo drafting, board material and post-investment review.</p>
+      </div>
+
+      <div class="kititem">
+        <div class="top"><span class="q">18</span><span class="u">tasks</span></div>
+        <div class="kn">The audit engine</div>
+        <p class="kd">Continuous controls monitoring, transaction anomaly detection, SOX testing, deficiency aggregation, remediation tracking and workpaper build.</p>
+      </div>
+
+      <div class="kititem">
+        <div class="top"><span class="q">12</span><span class="u">tasks</span></div>
+        <div class="kn">The close engine</div>
+        <p class="kd">Readiness check, accrual build and trending, JE drafting and support matching, flux detection, root tracing, and the package assembled to your calendar.</p>
+      </div>
+
+      <div class="kititem">
+        <div class="top"><span class="q">13</span><span class="u">tasks</span></div>
+        <div class="kn">The provision engine</div>
+        <p class="kd">Current and deferred provision, ETR build and driver explanation, valuation allowance, uncertain positions, rate reconciliation and the footnote itself.</p>
+      </div>
+
+      <div class="kititem">
+        <div class="top"><span class="q">378</span><span class="u">in total</span></div>
+        <div class="kn">Everything else</div>
+        <p class="kd">Working capital, payments and fraud controls, bank relationships, pricing and margin, planning and budgeting, transfer pricing, investor relations. Eight departments, 60 branches.</p>
+      </div>
+
+      <div class="kititem">
+        <div class="top"><span class="q">25</span><span class="u">context files</span></div>
+        <div class="kn">The base underneath it</div>
+        <p class="kd">Built with you through a five module guided intake. Every task reads it before it runs, which is what makes the output yours rather than generic.</p>
+      </div>
+
+      <div class="kititem">
+        <div class="top"><span class="q word">Every task</span></div>
+        <div class="kn">The governance engine</div>
+        <p class="kd">Read the rules first, never assume an input, write the result back. Plus the orchestration map that says what feeds what and where two outputs have to reconcile.</p>
+      </div>
+
+      <div class="kititem">
+        <div class="top"><span class="q word">Monthly</span></div>
+        <div class="kn">Updates and a direct line to me</div>
+        <p class="kd">New tasks built from real engagements, standards changes tracked, and questions answered by a finance executive rather than a support queue.</p>
+      </div>
+
+    </div>
+
+    <div class="bookband">
+      <img class="cover" src="treasury-cover.jpg" alt="Treasury 2.0: Future-Proofing Finance with AI"
+           onerror="this.outerHTML='&lt;div class=\'coverbox\'&gt;&lt;div class=\'ct\'&gt;Treasury 2.0&lt;/div&gt;&lt;div class=\'cs\'&gt;Future-Proofing Finance with AI&lt;br&gt;Bojan Belejkovski&lt;/div&gt;&lt;/div&gt;'">
+      <div class="bwrap">
+        <div class="bk">The book, included</div>
+        <h3>Treasury 2.0: Future-Proofing Finance with AI</h3>
+        <div class="sub">Bojan Belejkovski</div>
+        <p>The execution playbook this whole library grew out of, written before any of it existed. It is built on the D.A.S.H. framework, and every member gets it in full.</p>
+        <div class="dashfw">
+          <span><b>D</b> Digitize</span>
+          <span><b>A</b> Automate</span>
+          <span><b>S</b> Streamline</span>
+          <span><b>H</b> Harness AI</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============ CADENCE ============ -->
+<section id="cadence" class="sec-wash">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="kick">After you have it</div>
+      <h2>You get the library. <span class="ital">Then what?</span></h2>
+      <p>A file library that never changes goes stale the first time a standard moves or your structure does. Here's the rhythm after day one.</p>
+    </div>
+
+    <div class="cal">
+      <div class="cal-h">
+        <div>Week one</div>
+        <div>First close</div>
+        <div>Every month</div>
+        <div>Ongoing</div>
+      </div>
+      <div class="cal-b">
+        <div class="cal-col rv d1">
+          <div class="cal-item"><b>Run the interview</b><span>Five modules, at your pace</span></div>
+          <div class="cal-item"><b>Node Zero populated</b><span>25 context files, gaps visible</span></div>
+          <div class="cal-item soft"><b>Pick three tasks</b><span>Start where the pain is</span></div>
+        </div>
+        <div class="cal-col rv d2">
+          <div class="cal-item"><b>Close package</b><span>Assembled against your calendar</span></div>
+          <div class="cal-item"><b>Flux commentary</b><span>Your thresholds, your voice</span></div>
+          <div class="cal-item soft"><b>Workpapers written back</b><span>Next run starts warmer</span></div>
+        </div>
+        <div class="cal-col rv d3">
+          <div class="cal-item"><b>Library update</b><span>What changed, and why</span></div>
+          <div class="cal-item"><b>New tasks added</b><span>Built from real engagements</span></div>
+          <div class="cal-item soft"><b>Standards tracked</b><span>Accounting and tax changes</span></div>
+        </div>
+        <div class="cal-col rv d4">
+          <div class="cal-item"><b>Your base stays yours</b><span>It never leaves your environment</span></div>
+          <div class="cal-item"><b>Structure changes absorbed</b><span>New entity, new facility, new covenant</span></div>
+          <div class="cal-item soft"><b>Direct line to me</b><span>A treasurer, not a support queue</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ TWO WAYS IN ============ -->
+<section id="waitlist" style="padding-top:30px;">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="kick">Not live yet</div>
+      <h2>Two ways in, <span class="ital">starting now.</span></h2>
+      <p>The Network opens shortly. Until then you can take the foundation and start building against it, or hold a place in the founding group.</p>
+    </div>
+
+    <div class="ways">
+
+      <div class="way free rv d1">
+        <div class="wk">Free · available today</div>
+        <h3>The Node Zero Starter Base</h3>
+        <p>The foundation the whole library reads from, given away complete. Fill it in and it works for you whether or not you ever buy anything.</p>
+        <ul class="wlist">
+          <li>All 25 context files, structured and annotated, ready to fill</li>
+          <li>The setup guide that explains what belongs in each one</li>
+          <li>One complete working task: the 13-Week Cash Flow Forecast</li>
+          <li>Runs in your own AI workspace, nothing routed through us</li>
+        </ul>
+        <a class="btn btn-teal" href="mailto:bojan@denarfinancial.com?subject=Node%20Zero%20Starter%20Base" style="align-self:flex-start;">Get the Starter Base</a>
+        <div class="wnote">No card. The base is genuinely useful on its own, which is rather the point.</div>
+      </div>
+
+      <div class="way paid rv d2">
+        <div class="wk">Founding 100 · waitlist open</div>
+        <h3>The Treasury Mentor Network</h3>
+        <p>Everything above, plus the full library, the guided intake, the governance layer and monthly updates. Pricing is announced at launch.</p>
+        <ul class="wlist">
+          <li>All 378 tasks across 8 departments and 60 branches</li>
+          <li>The five-module guided intake that builds your base with you</li>
+          <li>The governance engine and the orchestration map</li>
+          <li>Monthly library updates and a direct line to me</li>
+          <li><strong style="color:#fff;">The first 100 members receive Treasury 2.0 in full</strong></li>
+        </ul>
+        <a class="btn btn-teal" href="mailto:bojan@denarfinancial.com?subject=Node%20Zero%20waitlist" style="align-self:flex-start;">Join the waitlist</a>
+        <div class="wnote">Founding places are counted from the waitlist, in order.</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section style="padding-top:20px;">
+  <div class="wrap">
+    <footer>
+      <div>&copy; 2026 The Treasury Mentor</div>
+    </footer>
+  </div>
+</section>
+
+<script>
+(function(){
+  function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+  var CAPS={ap:'AP',ar:'AR',kpi:'KPI',roi:'ROI',npv:'NPV',sox:'SOX',etr:'ETR',utp:'UTP',fx:'FX',var:'VaR',
+    je:'JE',bs:'BS',ic:'IC',dd:'DD',cim:'CIM',lbo:'LBO',qa:'Q&A',pbc:'PBC',cwip:'CWIP',tp:'TP',ppa:'PPA',
+    gaap:'GAAP',cbcr:'CbCR',idr:'IDR',kyc:'KYC',bu:'BU',gl:'GL',rec:'Rec',btax:'Book-to-Tax',dso:'DSO',
+    dpo:'DPO',tms:'TMS',ai:'AI',lc:'LC',rfp:'RFP'};
+  function pretty(raw){
+    var n = raw.replace(/\.md$/i,'').replace(/_1$/,'');
+    if (n.indexOf(' ') === -1) {
+      n = n.replace(/_/g,' / ').replace(/-/g,' ');
+      n = n.split(' ').filter(Boolean).map(function(w){
+        var lw=w.toLowerCase();
+        if (CAPS[lw]) return CAPS[lw];
+        return w.charAt(0).toUpperCase()+w.slice(1);
+      }).join(' ');
+    } else { n = n.replace(/_/g,' / '); }
+    return n;
+  }
+
+  var ICONS = [
+    'M2 12 L6.2 7.6 L9.2 10 L14 3.6 M10.6 3.6 H14 V7',
+    'M4.5 14 V3.5 H10 V14 M4.5 14H11.5 M6 6H6.4 M8.2 6H8.6 M6 8.6H6.4 M8.2 8.6H8.6 M6 11.2H6.4 M8.2 11.2H8.6 M11.5 9V14',
+    'M3 8.3 L6.2 11.3 L13 4.2',
+    'M4.5 2 H9.5 L12 4.5 V14 H4.5 Z M9.5 2 V4.5 H12',
+    'M2.5 3.5 H13.5 V10.2 H6.7 L4.2 12.6 V10.2 H2.5 Z',
+    'M3 12.6 L3.6 10.1 L10.4 3.3 A1.15 1.15 0 0112 5 L5.2 11.8 Z',
+    'M7.2 11a3.8 3.8 0 100-7.6 3.8 3.8 0 000 7.6z M9.9 9.9 L13.3 13.3',
+    'M8 2 L12.7 4 V8.1 C12.7 11.4 10.6 13.1 8 13.9 C5.4 13.1 3.3 11.4 3.3 8.1 V4 Z',
+    'M8 4.6 V8 L10.2 9.4 M8 14a6 6 0 100-12 6 6 0 000 12z',
+    'M8 2.3 L14 5.5 L8 8.7 L2 5.5 Z M2 8.3 L8 11.5 L14 8.3 M2 11 L8 14.2 L14 11'
+  ];
+
+  var RAW = [
+    { name:'Treasury', note:'Cash positioning, debt and covenant work, and the forecast engine the rest of the map leans on.', subs:[
+      {name:'Cash Management', files:['bank-account-management','bank-fee-analysis','bank-statement-reconciliation','cash-concentration-sweeps','cash-reporting','daily-cash-positioning','excess-cash-investment','intercompany-funding-pooling-structure-designer','kyc-bank-onboarding','trapped-cash-repatriation-analyzer']},
+      {name:'Debt & Capital Markets', files:['capital-structure-strategy','covenant-compliance','debt-issuance-refinancing','facility-maturity-management','lender-reporting','rating-agency-support']},
+      {name:'Working Capital', files:['ap-payment-timing','ar-monitoring-collections','cash-conversion-cycle-analytics','dpo-optimizer','dso-driver-analyzer','intercompany-reconciliation-settlement','net-working-capital-target-setter','receivables-financing-analyzer','seasonal-working-capital-planner','supply-chain-finance-program-manager','working-capital-benchmark-analyzer','working-capital-bridge','working-capital-forecaster','working-capital-initiative-tracker']},
+      {name:'Forecasting', files:['balance-sheet-forecast','cash-flow-13-week','cash-flow-52-week','cash-flow-statement-indirect','debt-revolver-schedule','forecast-accuracy-tracking','forecast-consolidation','forward-covenant-testing','scenario-sensitivity-forecasting','weekly-income-statement','weekly-rollforward']},
+      {name:'Cash Investment Policy & Portfolio Management', files:['eligible-instrument-screener','investment-policy-compliance-tester','investment-policy-exception-approver','investment-reporting-package-builder','issuer-credit-monitor','maturity-ladder-manager','portfolio-construction-modeler','portfolio-performance-tracker','portfolio-risk-aggregator','yield-optimization-analyzer']},
+      {name:'Payment Controls', files:['bank-file-reconciler','check-fraud-monitor','duplicate-payment-screener','fraud-incident-responder','payment-approval-router','payment-exception-escalator','payment-file-validator','payment-timing-optimizer','positive-pay-exception-reviewer','wire-fraud-detector']},
+      {name:'Financial Risk Management', files:['commodity-risk','credit-risk-counterparty-monitoring','fx-exposure-var','hedge-execution','interest-rate-risk']},
+      {name:'Insurance', files:['certificate-of-insurance-management','claims-tracking','coverage-gap-analysis','insurance-program-management','insurance-renewal-support']},
+      {name:'Corporate Actions Support', files:['buyback-compliance-monitor','buyback-execution-tracker','dividend-payment-administrator','drip-program-administrator']},
+      {name:'Bank Relationship Management', files:['bank-relationship-reviewer','bank-service-level-monitor','bank-wallet-share-analyzer']},
+      {name:'Payment Program Optimization', files:['corporate-card-program-administrator','integrated-payables-rebate-modeler','payment-method-migration-analyzer']},
+      {name:'Pension Treasury Oversight', files:['pension-asset-liability-monitor','pension-contribution-planner','pension-funding-status-monitor']},
+      {name:'TMS', files:['tms-access-administrator','tms-data-integrity-monitor','tms-evaluation-selection-framework','tms-requirements-definition','tms-workflow-configurator']},
+      {name:'Trade Finance & LC', files:['letter-of-credit-tracker','trade-finance-facility-manager']},
+      {name:'Bank RFP & Selection', files:['bank-rfp-manager']},
+      {name:'Treasury Technology & AI Adoption Roadmap', files:['treasury-technology-ai-adoption-roadmap-builder']},
+      {name:'Digital Assets', files:[
+        'Digital Asset Treasury Policy Builder',
+        'Stablecoin Settlement Business Case Builder',
+        'Stablecoin Issuer and Reserve Due Diligence',
+        'Digital Asset Custodian Selection and Due Diligence',
+        'On-Chain Payment Control Designer',
+        'Wallet Address Sanctions Screening Procedure',
+        'Tokenized Money Market Fund Eligibility Assessor',
+        'Tokenized Deposit Evaluator',
+        '24/7 Settlement Liquidity Policy Designer',
+        'Cross-Border Digital Asset Corridor Readiness Screener',
+        'Digital Asset Pilot Designer and Kill-Criteria Manager',
+        'On-Chain to Subledger to GL Reconciliation Designer',
+        'Digital Asset Counterparty and Concentration Risk Assessor',
+        'Digital Asset Incident Response Playbook'
+      ]}
+    ]},
+    { name:'Controllership & Accounting', note:'Books what everyone else computes. The actuals backbone every downstream task reads from.', subs:[
+      {name:'Financial Close', files:['accrual-calculator','accrual-reversal-tracker','accrual-trender','close-calendar-manager','close-flux-detector','close-package-builder','close-readiness-checker','close-status-tracker','flux-root-tracer','je-approval-router','je-drafter','je-support-matcher']},
+      {name:'Financial Reporting', files:['audit-query-responder','audit-support-puller','basis-difference-tracker','consolidation-engine','currency-translator','disclosure-checklist-runner','entity-statement-builder','filing-package-assembler','filing-tie-out','gaap-stat-bridge','intercompany-eliminator','note-drafter','pbc-manager','statement-builder','statement-validator']},
+      {name:'Technical Accounting', files:['adoption-planner','contract-analyzer','hedge-doc-preparer','hedge-effectiveness-tester','hedge-je-support','memo-drafter','memo-researcher','opening-balance-builder','ppa-modeler','rev-rec-applier','rev-rec-flagger','standard-change-assessor']},
+      {name:'Reconciliations', files:['bank-subledger-rec-builder','bs-rec-builder','intercompany-dispute-resolver','intercompany-matcher','open-item-ager','rec-auto-certifier','rec-exception-escalator','rec-package-assembler','rec-risk-scorer','rec-trend-monitor']},
+      {name:'Shared Services', files:['ap-exception-handler','cash-applier','duplicate-detector','expense-router','expense-validator','invoice-capturer','invoice-generator','master-data-validator','three-way-matcher','unapplied-resolver']},
+      {name:'Fixed Assets & Lease Accounting', files:['asset-register-manager','capex-vs-opex-classifier','cwip-tracker','depreciation-calculator','impairment-tester','lease-classifier','lease-liability-calculator','lease-modification-tracker']}
+    ]},
+    { name:'Tax', note:'Book-to-tax, provision, and transfer pricing. Computes the numbers Controllership then books.', subs:[
+      {name:'Tax Provision & Reporting', files:['current-provision-calculator','deferred-disclosure-builder','deferred-provision-calculator','deferred-rollforward','etr-builder','etr-driver-explainer','provision-consolidator','rate-recon-disclosure-builder','tax-disclosure-tie-out','tax-footnote-drafter','utp-identifier','utp-measurer','valuation-allowance-assessor']},
+      {name:'Direct Tax', files:['btax-workpaper-builder','estimate-calculator','filing-status-tracker','jurisdiction-nexus-monitor','permanent-diff-identifier','return-form-populator','return-workpaper-assembler','safe-harbor-tester','tax-calendar-manager','taxable-income-builder','temporary-diff-calculator']},
+      {name:'Indirect Tax', files:['cert-expiry-monitor','cert-validator','indirect-gl-reconciler','indirect-return-preparer','indirect-variance-explainer','mistax-flagger','multi-jurisdiction-filer','rate-applier','taxability-determiner']},
+      {name:'Tax Planning & Research', files:['change-implementation-planner','impact-assessor','legislation-monitor','planning-risk-scorer','planning-scenario-modeler','position-support-drafter','structuring-optimizer','tax-researcher']},
+      {name:'Transfer Pricing', files:['cbcr-assembler','comparables-assembler','local-file-builder','margin-analyzer','master-file-builder','tp-adjustment-calculator','tp-deviation-flagger','tp-margin-monitor']},
+      {name:'Tax Accounts & Operations', files:['audit-exposure-tracker','audit-idr-manager','audit-support-assembler','notice-responder','notice-triage','tax-account-reconciler','tax-payment-tracker']}
+    ]},
+    { name:'Commercial Finance', note:'Cost, margin, and pricing analysis that feeds forecast assumptions and strategic business cases.', subs:[
+      {name:'Sales & Commercial Analysis', files:['Commission Accrual Support','Commission Modeler','Discount Analyzer','Incentive Alignment Tester','Net Revenue Realization Tracker','Pipeline Economics Analyzer','Rebate Program Modeler','Revenue Bridge Builder','Win-Loss Margin Analyzer']},
+      {name:'Standard Costing & Variance', files:['Cost Roll Processor','Inventory Analyzer','Purchase Price Variance Analyzer','Standard Cost Builder','Standard Review Flagger','Usage_Efficiency Variance Analyzer','Variance Explainer','Volume_Mix Variance Analyzer','Working Capital Tie']},
+      {name:'Pricing & Profitability', files:['Deal Profitability Evaluator','Elasticity Informer','Margin Alert Generator','Margin Leakage Detector','Price Realization Tracker','Price_Margin Analyzer','Quote Guardrail Checker','Realized Margin Monitor']},
+      {name:'Cost & Margin Analysis', files:['breakeven-modeler','contribution-calculator','cost-benchmark-analyzer','cost-driver-decomposer','cost-to-serve-modeler','margin-erosion-tracer','profitability-calculator','profitability-ranker']},
+      {name:'Operational Capex & Investment', files:['Asset Utilization Analyzer','Capex Benefit Realization','Capex Justification Builder','Capex Spend Tracker','Equipment ROI Modeler','Make-vs-Buy Modeler']},
+      {name:'Business Partnering', files:['BU Performance Packager','Operational Decision Modeler','Operational KPI Linker','Performance Narrative Writer','Tradeoff Quantifier']},
+      {name:'Customer & Contract Economics', files:['Contract Profitability Analyzer','Customer Lifetime Value Modeler']}
+    ]},
+    { name:'Strategic Finance', note:'Valuation, deal modeling, and capital allocation built for board-level decisions.', subs:[
+      {name:'Portfolio Review + Strategic Restructuring', files:['Carveout Modeler','Divestiture Screener','Portfolio Analyzer','Portfolio Scenario Modeler','Restructuring Analyzer','Turnaround Case Builder']},
+      {name:'Target Screening + Valuation & Deal Modeling', files:['LBO Accretion Modeler','Market Mapper','Synergy Modeler','Target Profiler','Target Screener','Valuation Modeler']},
+      {name:'Board & Strategic Communication', files:['Board QA Anticipator','Board Strategy Deck Builder','Decision Brief Writer','Sponsor Report Builder','Value Creation Tracker']},
+      {name:'Decision Support Models + Post-Investment Review', files:['Decision Modeler','Decision Tradeoff Analyzer','Lessons Capturer','Post-Investment Analyzer','Recommendation Builder']},
+      {name:'Due Diligence Support + Deal Materials', files:['CIM Analyzer','DD Financial Analyzer','DD Red Flag Flagger','DD Request Tracker','IC Memo Builder']},
+      {name:'Distressed Target Analysis', files:['Capital Structure Analyzer','Distressed Screener','Recovery Waterfall Modeler','Restructuring Angle Modeler']},
+      {name:'Corporate Development : Capital Allocation', files:['Allocation Scenario Comparator','Buy-Build Modeler','Capital Allocation Modeler','Option Sensitivity Tester']},
+      {name:'Business Case Development', files:['Assumption Validator','Business Case Builder','Case Risk Assessor']},
+      {name:'Project & Investment Appraisal', files:['Appraisal Modeler','Hurdle Ranker','Sensitivity Scenario Runner']},
+      {name:'Integration Planning', files:['Integration Planner','Synergy Tracker']}
+    ]},
+    { name:'FP&A', note:'Owns the P&L forecast and management reporting that the treasury liquidity forecast builds on top of.', subs:[
+      {name:'FP&A Forecasting', files:['actual-budget-forecast-comparator','forecast-accuracy-bias-analyzer','forecast-accuracy-bias-tracking','reforecast','rolling-forecast']},
+      {name:'Planning & Budgeting', files:['annual-operating-plan-build','budget-consolidation','capex-planning','long-range-planning','target-setting-guidance']},
+      {name:'Management Reporting', files:['dashboard-refresher','data-assembler','kpi-calculator','package-builder']},
+      {name:'Cost Allocation', files:['allocation-reporting-dispute-support','allocation-setup-execution','intercompany-cost-recovery']},
+      {name:'Data Integrity & Reporting Foundation', files:['data-validation-reconciliation','reporting-data-preparation']},
+      {name:'Data Integrity', files:['data-quality-validator','source-system-reconciler']},
+      {name:'Variance & Performance', files:['performance-commentary-builder','variance-driver-analyzer']}
+    ]},
+    { name:'Internal Audit', note:'Controls testing and continuous monitoring that checks every other branch of the map.', subs:[
+      {name:'Continuous Controls Monitoring', files:['anomaly-surfacer','audit-report-drafter','control-monitor','duplicate-conflict-detector','finding-documenter','fraud-risk-scorer','remediation-tracker','transaction-anomaly-detector','workpaper-builder']},
+      {name:'Risk Assessment, Controls Testing, SOX Support', files:['audit-plan-builder','control-matrix-manager','control-test-executor','deficiency-aggregator','exception-evaluator','risk-register-manager','risk-scorer','sample-selector','sox-test-tracker']}
+    ]},
+    { name:'Investor Relations', note:'Earnings materials and disclosure, consistent with but distinct from the notes Controllership owns.', subs:[
+      {name:'Shareholder Analysis + Disclosure & Messaging Support', files:['Disclosure Consistency Reviewer','Holder Change Analyzer','Messaging Consistency Checker','Ownership Tracker']},
+      {name:'Earnings Materials', files:['earnings-deck-builder','earnings-fact-checker','earnings-release-drafter','earnings-script-writer']},
+      {name:'Earnings Call Prep & Transcript Analysis', files:['Own Call Analyzer','Peer Call Analyzer','QA Prep Builder']},
+      {name:'Investor Q&A & Briefing Prep', files:['Briefing Note Builder','Investor Profile Builder','Talking Points Generator']},
+      {name:'Peer & Market Monitoring', files:['Analyst Coverage Monitor','Market Development Summarizer','Peer Performance Tracker']}
+    ]}
+  ];
+
+  var DEPTS = RAW.map(function(d,i){
+    var subs = d.subs.map(function(s){ return {name:s.name, tasks:s.files.map(pretty)}; });
+    var count = subs.reduce(function(a,s){return a+s.tasks.length;},0);
+    return {name:d.name, note:d.note, subs:subs, count:count, icon:ICONS[i%ICONS.length]};
+  });
+  var TOTAL = DEPTS.reduce(function(a,d){return a+d.count;},0);
+  var BRANCHES = DEPTS.reduce(function(a,d){return a+d.subs.length;},0);
+  document.getElementById('t-tasks').textContent = TOTAL;
+  document.getElementById('t-branch').textContent = BRANCHES;
+
+  /* ---------- marquee build ---------- */
+  (function(){
+    var all=[];
+    DEPTS.forEach(function(d){ d.subs.forEach(function(s){ s.tasks.forEach(function(t){ all.push({t:t,d:d.name}); }); }); });
+    for (var i=all.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var tmp=all[i]; all[i]=all[j]; all[j]=tmp; }
+    var featuredDigitalAssets = [
+      'Digital Asset Treasury Policy Builder',
+      'Stablecoin Settlement Business Case Builder',
+      'Digital Asset Custodian Selection and Due Diligence',
+      'On-Chain Payment Control Designer',
+      'Tokenized Deposit Evaluator',
+      'Digital Asset Incident Response Playbook'
+    ];
+    featuredDigitalAssets.forEach(function(name,idx){
+      var found=all.findIndex(function(o){ return o.t===name; });
+      if(found!==-1){ var item=all.splice(found,1)[0]; all.splice([5,18,35,48,65,78][idx],0,item); }
+    });
+    var rows=[document.getElementById('mq1'),document.getElementById('mq2'),document.getElementById('mq3')];
+    var per=30;
+    rows.forEach(function(row,ri){
+      var slice=all.slice(ri*per,(ri*per)+per);
+      var html=slice.map(function(o){
+        return '<div class="mchip"><span class="sq"></span>'+esc(o.t)+'<span class="md">'+esc(o.d)+'</span></div>';
+      }).join('');
+      row.innerHTML = html + html;
+    });
+  })();
+
+  // ---------- geometry ----------
+  var GAP = 5;
+  var usable = 360 - GAP*DEPTS.length;
+  var R_D = 230, R_S = 420, R_T0 = 560, R_TSTEP = 34;
+  var cur = -90 - GAP/2;
+  DEPTS.forEach(function(d){
+    d.a0 = cur + GAP/2; d.span = (d.count/TOTAL)*usable; d.a1 = d.a0+d.span; d.mid=(d.a0+d.a1)/2;
+    cur = d.a1 + GAP/2;
+    var sc = d.a0;
+    d.subs.forEach(function(s){
+      var w = (Math.max(s.tasks.length,1)/d.count)*d.span;
+      s.a0=sc; s.a1=sc+w; s.mid=sc+w/2; sc+=w; s.dept=d;
+    });
+  });
+
+  function pol(r,a){ var t=a*Math.PI/180; return {x:r*Math.cos(t), y:r*Math.sin(t)}; }
+  function fiber(r1,a1,r2,a2,wob){
+    var p1=pol(r1,a1), p2=pol(r2,a2), m=(r1+r2)/2;
+    var c1=pol(m*0.9, a1+(wob||0)), c2=pol(m*1.1, a2-(wob||0)*0.6);
+    return 'M'+p1.x.toFixed(1)+','+p1.y.toFixed(1)+'C'+c1.x.toFixed(1)+','+c1.y.toFixed(1)+' '+c2.x.toFixed(1)+','+c2.y.toFixed(1)+' '+p2.x.toFixed(1)+','+p2.y.toFixed(1);
+  }
+
+  var NS='http://www.w3.org/2000/svg';
+  function mk(t,a){ var e=document.createElementNS(NS,t); for(var k in a) e.setAttribute(k,a[k]); return e; }
+
+  var gR=document.getElementById('rings'), gWM=document.getElementById('wm'), gF=document.getElementById('fibers'),
+      gB=document.getElementById('boutons'), gS=document.getElementById('subnodes'), gD=document.getElementById('deptnodes');
+
+  [R_D,R_S,R_T0].forEach(function(r){ gR.appendChild(mk('circle',{class:'ring',cx:0,cy:0,r:r})); });
+  var wmText = mk('text',{class:'wm',x:0,y:70,'text-anchor':'middle','font-size':170}); wmText.textContent='NODE ZERO'; gWM.appendChild(wmText);
+
+  var taskRecs=[], deptRecs=[], subRecs=[];
+
+  DEPTS.forEach(function(d,di){
+    var own=[], wob=(di%2?1:-1)*3;
+    var f0 = mk('path',{class:'fiber',d:fiber(42,d.mid,R_D-16,d.mid,wob),stroke:'#C9CDD3','stroke-width':2.2,'stroke-opacity':.9,'stroke-linecap':'round'});
+    gF.appendChild(f0); own.push(f0);
+
+    d.subs.forEach(function(s,si){
+      var sw=(si%2?1:-1)*2.2;
+      var f1 = mk('path',{class:'fiber',d:fiber(R_D+16,d.mid,R_S,s.mid,sw),stroke:'#D3D7DC','stroke-width':1.5,'stroke-opacity':.85,'stroke-linecap':'round'});
+      gF.appendChild(f1); own.push(f1);
+      var dp1=pol(R_D+16,d.mid), sp1=pol(R_S,s.mid);
+      var dotT=0.62, dotX=dp1.x+(sp1.x-dp1.x)*dotT, dotY=dp1.y+(sp1.y-dp1.y)*dotT;
+      var fd1 = mk('circle',{class:'fiber-dot',cx:dotX.toFixed(1),cy:dotY.toFixed(1),r:2.3}); gF.appendChild(fd1); own.push(fd1);
+
+      var sp = pol(R_S, s.mid);
+      var sg = mk('g',{class:'sub-hit',tabindex:'0',role:'button','aria-label':s.name+', '+s.tasks.length+' tasks'});
+      sg.appendChild(mk('circle',{class:'sub-body',cx:sp.x.toFixed(1),cy:sp.y.toFixed(1),r:6}));
+      var right = Math.cos(s.mid*Math.PI/180) >= -0.02;
+      var sn = mk('text',{class:'sub-name',x:(sp.x+(right?11:-11)).toFixed(1),y:(sp.y-9).toFixed(1),'text-anchor':right?'start':'end'});
+      sn.textContent = s.name;
+      sg.appendChild(sn);
+      var tt = mk('title',{}); tt.textContent = s.name+' · '+s.tasks.length+' tasks'; sg.appendChild(tt);
+      gS.appendChild(sg); own.push(sg);
+      subRecs.push({el:sg, dept:d, sub:s});
+
+      var n=s.tasks.length, per=Math.min(5,Math.max(2,Math.ceil(Math.sqrt(n*1.5))));
+      s.tasks.forEach(function(name,i){
+        var row=Math.floor(i/per), inRow=i%per, rowN=Math.min(per,n-row*per);
+        var r=R_T0+row*R_TSTEP;
+        var wedge=Math.max(s.a1-s.a0-0.5,0.7), step=wedge/rowN;
+        var a=s.a0+0.25+step*(inRow+0.5);
+        var p=pol(r,a);
+        var f2 = mk('path',{class:'fiber',d:fiber(R_S+7,s.mid,r-8,a,1),stroke:'#DCE0E4','stroke-width':1,'stroke-opacity':.8,'stroke-linecap':'round'});
+        gF.appendChild(f2); own.push(f2);
+
+        var tg = mk('g',{class:'task-hit',role:'button','aria-label':name});
+        tg.appendChild(mk('rect',{class:'bouton',x:(p.x-5.5).toFixed(1),y:(p.y-5.5).toFixed(1),width:11,height:11,rx:2}));
+        var t2=mk('title',{}); t2.textContent=name+'  ·  '+s.name; tg.appendChild(t2);
+        gB.appendChild(tg); own.push(tg);
+
+        var rec={el:tg,name:name,dept:d,sub:s,x:p.x,y:p.y};
+        taskRecs.push(rec);
+        tg.addEventListener('click', function(e){ e.stopPropagation(); stopAuto(); openTask(rec); });
+      });
+
+      sg.addEventListener('click', function(e){ e.stopPropagation(); stopAuto(); openSub(d,s); });
+      sg.addEventListener('keydown', function(e){ if(e.key==='Enter'||e.key===' '){e.preventDefault();stopAuto();openSub(d,s);} });
+    });
+
+    var dp = pol(R_D, d.mid);
+    var dg = mk('g',{class:'dept-hit',tabindex:'0',role:'button','aria-label':d.name+', '+d.count+' tasks'});
+    dg.appendChild(mk('circle',{class:'dept-body',cx:dp.x.toFixed(1),cy:dp.y.toFixed(1),r:16,stroke:'#4CABC4','stroke-width':2}));
+    dg.appendChild(mk('path',{class:'dept-icon',d:d.icon,transform:'translate('+(dp.x-8).toFixed(1)+','+(dp.y-8).toFixed(1)+')'}));
+    var right = Math.cos(d.mid*Math.PI/180) >= 0;
+    var lx = dp.x + (right?27:-27);
+    var nm = mk('text',{class:'dept-name',x:lx.toFixed(1),y:(dp.y-1).toFixed(1),'text-anchor':right?'start':'end'});
+    nm.textContent = d.name.toUpperCase();
+    var sb = mk('text',{class:'dept-sub',x:lx.toFixed(1),y:(dp.y+13).toFixed(1),'text-anchor':right?'start':'end'});
+    sb.textContent = d.count+' tasks · '+d.subs.length+' branches';
+    dg.appendChild(nm); dg.appendChild(sb); gD.appendChild(dg);
+
+    var bb=nm.getBBox(), bb2=sb.getBBox();
+    var bx=Math.min(bb.x,bb2.x), by=Math.min(bb.y,bb2.y);
+    var bw=Math.max(bb.x+bb.width,bb2.x+bb2.width)-bx, bh=Math.max(bb.y+bb.height,bb2.y+bb2.height)-by;
+    var padX=9,padY=6;
+    var pill = mk('rect',{class:'dept-pill',x:(bx-padX).toFixed(1),y:(by-padY).toFixed(1),width:(bw+padX*2).toFixed(1),height:(bh+padY*2).toFixed(1),rx:(bh/2+padY).toFixed(1)});
+    dg.insertBefore(pill, nm);
+
+    deptRecs.push({el:dg, dept:d, own:own});
+    dg.addEventListener('click', function(e){ e.stopPropagation(); stopAuto(); openDept(d); });
+    dg.addEventListener('keydown', function(e){ if(e.key==='Enter'||e.key===' '){e.preventDefault();stopAuto();openDept(d);} });
+  });
+
+  // ---------- camera ----------
+  var svg=document.getElementById('nerve'), cam=document.getElementById('cam');
+  var view={x:0,y:0,k:0.5}, target=null, raf=null;
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function apply(){ cam.setAttribute('transform','translate('+view.x+','+view.y+') scale('+view.k+')'); }
+  function box(){ return svg.getBoundingClientRect(); }
+  function fitScale(){ var r=box(); return Math.max(0.24, Math.min(r.width,r.height)/1380); }
+
+  function easeTo(cx,cy,k){
+    var r=box();
+    var nx=r.width/2 - cx*k, ny=r.height/2 - cy*k;
+    if (reduce){ view.x=nx; view.y=ny; view.k=k; apply(); return; }
+    target={x:nx,y:ny,k:k};
+    if (raf) return;
+    var step=function(){
+      var dx=target.x-view.x, dy=target.y-view.y, dk=target.k-view.k;
+      view.x += dx*0.055; view.y += dy*0.055; view.k += dk*0.055;
+      apply();
+      if (Math.abs(dx)+Math.abs(dy) > 0.25 || Math.abs(dk) > 0.0004) raf=requestAnimationFrame(step);
+      else { view.x=target.x; view.y=target.y; view.k=target.k; apply(); raf=null; }
+    };
+    raf=requestAnimationFrame(step);
+  }
+  function fitAll(){ easeTo(0,0,fitScale()); }
+
+  function setLevel(l){ svg.classList.remove('lvl-all','lvl-dept','lvl-sub','lvl-task'); svg.classList.add('lvl-'+l); }
+  function clearDim(){
+    deptRecs.forEach(function(r){ r.el.classList.remove('dimmed','halfdim'); r.own.forEach(function(o){o.classList.remove('dimmed','halfdim');}); });
+    subRecs.forEach(function(s){ s.el.classList.remove('dimmed','halfdim'); });
+    taskRecs.forEach(function(t){ t.el.classList.remove('on'); });
+  }
+  function dimTo(dept,sub){
+    deptRecs.forEach(function(r){ var keep=!dept||r.dept===dept; r.el.classList.toggle('dimmed',!keep); r.own.forEach(function(o){o.classList.toggle('dimmed',!keep);}); });
+    if (sub){
+      taskRecs.forEach(function(t){ if (t.dept===dept) t.el.classList.toggle('halfdim', t.sub!==sub); });
+      subRecs.forEach(function(s){ if (s.dept===dept) s.el.classList.toggle('halfdim', s.sub!==sub); });
+    }
+  }
+  function centroid(items){ var sx=0,sy=0; items.forEach(function(i){sx+=i.x;sy+=i.y;}); return {x:sx/items.length,y:sy/items.length}; }
+
+  var ins=document.getElementById('inspector'), crumbs=document.getElementById('crumbs');
+  function setCrumbs(parts){
+    crumbs.innerHTML = parts.map(function(p,i){ return p.fn ? '<button data-i="'+i+'">'+esc(p.label)+'</button>' : '<span class="now">'+esc(p.label)+'</span>'; }).join(' <span class="sep">/</span> ');
+    crumbs.querySelectorAll('button').forEach(function(b){ b.addEventListener('click', function(){ stopAuto(); parts[+b.dataset.i].fn(); }); });
+  }
+  function setWM(text){ wmText.textContent = text.toUpperCase(); }
+
+  function openOverview(){
+    clearDim(); setLevel('all'); fitAll(); setWM('Node Zero');
+    setCrumbs([{label:'All departments'}]);
+    var rows = DEPTS.slice().sort(function(a,b){return b.count-a.count;}).map(function(d){
+      return '<li data-d="'+DEPTS.indexOf(d)+'"><span>'+esc(d.name)+'</span><span class="n">'+d.count+'</span></li>';
+    }).join('');
+    ins.innerHTML = '<div class="ins-kick">The whole team</div><h2>'+TOTAL+' tasks, one shared context</h2>'+
+      '<p>Every square is one job a finance function actually runs. All of them read the same picture of your company before they do anything.</p>'+
+      '<ul class="rows">'+rows+'</ul><div class="ins-foot">Pick a department here, or click any node on the map.</div>';
+    ins.querySelectorAll('.rows li').forEach(function(li){ li.addEventListener('click', function(){ stopAuto(); openDept(DEPTS[+li.dataset.d]); }); });
+  }
+
+  function openDept(d){
+    clearDim(); setLevel('dept'); dimTo(d,null); setWM(d.name);
+    var pts = taskRecs.filter(function(t){return t.dept===d;});
+    var c = centroid(pts.length?pts:[pol(R_D,d.mid)]);
+    easeTo(c.x*0.7, c.y*0.7, fitScale()*1.55);
+    setCrumbs([{label:'All',fn:openOverview},{label:d.name}]);
+    var rows = d.subs.map(function(s,i){ return '<li data-s="'+i+'">'+esc(s.name)+'<span class="n">'+s.tasks.length+'</span></li>'; }).join('');
+    ins.innerHTML = '<button class="back-btn">← all departments</button><div class="ins-kick">Department</div>'+
+      '<h2>'+esc(d.name)+'</h2><p>'+esc(d.note)+'</p><ul class="rows">'+rows+'</ul>'+
+      '<div class="ins-foot">'+d.count+' tasks across '+d.subs.length+' branches.</div>';
+    ins.querySelector('.back-btn').addEventListener('click', function(){ stopAuto(); openOverview(); });
+    ins.querySelectorAll('.rows li').forEach(function(li){ li.addEventListener('click', function(){ stopAuto(); openSub(d, d.subs[+li.dataset.s]); }); });
+  }
+
+  function openSub(d,s){
+    clearDim(); setLevel('sub'); dimTo(d,s); setWM(s.name);
+    var pts = taskRecs.filter(function(t){return t.sub===s;});
+    if (pts.length){ var c=centroid(pts); easeTo(c.x*0.88, c.y*0.88, fitScale()*2.15); }
+    setCrumbs([{label:'All',fn:openOverview},{label:d.name,fn:function(){openDept(d);}},{label:s.name}]);
+    var chips = s.tasks.map(function(n){ return '<span class="chip" data-n="'+esc(n)+'">'+esc(n)+'</span>'; }).join('');
+    ins.innerHTML = '<button class="back-btn">← '+esc(d.name)+'</button><div class="ins-kick">Branch · '+esc(d.name)+'</div>'+
+      '<h2>'+esc(s.name)+'</h2><p>'+s.tasks.length+' tasks on this branch. Each one reads your context base first and stops rather than guessing at anything missing.</p>'+
+      '<div class="chips">'+chips+'</div><div class="ins-foot">Click one to open it on the map.</div>';
+    ins.querySelector('.back-btn').addEventListener('click', function(){ stopAuto(); openDept(d); });
+    ins.querySelectorAll('.chip[data-n]').forEach(function(c2){
+      c2.addEventListener('click', function(){ stopAuto(); var rec=taskRecs.filter(function(t){return t.name===c2.dataset.n && t.sub===s;})[0]; if(rec) openTask(rec); });
+    });
+  }
+
+  function openTask(rec){
+    clearDim(); setLevel('task'); dimTo(rec.dept,rec.sub); rec.el.classList.remove('halfdim'); rec.el.classList.add('on');
+    setWM(rec.name);
+    easeTo(rec.x*0.94, rec.y*0.94, fitScale()*2.7);
+    setCrumbs([{label:'All',fn:openOverview},{label:rec.dept.name,fn:function(){openDept(rec.dept);}},{label:rec.sub.name,fn:function(){openSub(rec.dept,rec.sub);}},{label:rec.name}]);
+    var sibs = rec.sub.tasks.length-1;
+    ins.innerHTML = '<button class="back-btn">← '+esc(rec.sub.name)+'</button><div class="ins-kick">Task</div>'+
+      '<h2>'+esc(rec.name)+'</h2><div class="trail">'+esc(rec.dept.name)+' &rsaquo; '+esc(rec.sub.name)+'</div>'+
+      '<div class="ins-foot">Sits with '+sibs+' other '+(sibs===1?'task':'tasks')+' on the '+esc(rec.sub.name)+' branch. Full task detail is part of the Treasury Mentor Network.</div>';
+    ins.querySelector('.back-btn').addEventListener('click', function(){ stopAuto(); openSub(rec.dept,rec.sub); });
+  }
+
+  // ---------- auto tour ----------
+  function findDept(n){ for(var i=0;i<DEPTS.length;i++) if(DEPTS[i].name===n) return DEPTS[i]; return null; }
+  function findSub(d,n){ if(!d) return null; for(var i=0;i<d.subs.length;i++) if(d.subs[i].name===n) return d.subs[i]; return null; }
+  function findTask(s,n){ for(var i=0;i<taskRecs.length;i++) if(taskRecs[i].sub===s && taskRecs[i].name===n) return taskRecs[i]; return null; }
+
+  var PLAN = [
+    ['overview',null,null,null,2600],
+    ['dept','Treasury',null,null,2900],
+    ['sub','Treasury','Cash Management',null,2900],
+    ['task','Treasury','Cash Management','Daily Cash Positioning',3400],
+    ['sub','Treasury','Debt & Capital Markets',null,2700],
+    ['task','Treasury','Debt & Capital Markets','Covenant Compliance',3400],
+    ['overview',null,null,null,2400],
+    ['dept','Controllership & Accounting',null,null,2800],
+    ['sub','Controllership & Accounting','Financial Close',null,2800],
+    ['task','Controllership & Accounting','Financial Close','Close Package Builder',3300],
+    ['overview',null,null,null,2400],
+    ['dept','Tax',null,null,2700],
+    ['sub','Tax','Tax Provision & Reporting',null,2800],
+    ['task','Tax','Tax Provision & Reporting','ETR Builder',3300],
+    ['overview',null,null,null,2600]
+  ];
+
+  var autoOn=false, autoTimer=null, autoIdx=0, seen=false;
+  var demoBtn=document.getElementById('demoBtn'), demoLbl=document.getElementById('demoLbl');
+
+  function runStep(){
+    if(!autoOn) return;
+    var s = PLAN[autoIdx % PLAN.length];
+    autoIdx++;
+    var d = s[1]?findDept(s[1]):null;
+    var sb = (d&&s[2])?findSub(d,s[2]):null;
+    try{
+      if (s[0]==='overview') openOverview();
+      else if (s[0]==='dept' && d) openDept(d);
+      else if (s[0]==='sub' && sb) openSub(d,sb);
+      else if (s[0]==='task' && sb){ var t=findTask(sb,s[3]); if(t) openTask(t); else openSub(d,sb); }
+    }catch(e){}
+    autoTimer = setTimeout(runStep, s[4]);
+  }
+  function startAuto(){
+    if(autoOn||reduce) return;
+    autoOn=true; demoBtn.classList.remove('paused'); demoLbl.textContent='Auto tour · running';
+    runStep();
+  }
+  function stopAuto(){
+    if(!autoOn && seen) return;
+    autoOn=false; seen=true;
+    if(autoTimer){ clearTimeout(autoTimer); autoTimer=null; }
+    demoBtn.classList.add('paused'); demoLbl.textContent='Replay tour';
+  }
+  demoBtn.addEventListener('click', function(e){
+    e.stopPropagation();
+    if(autoOn) stopAuto();
+    else { autoIdx=0; startAuto(); }
+  });
+
+  var search=document.getElementById('search');
+  search.addEventListener('focus', stopAuto);
+  search.addEventListener('input', function(){
+    stopAuto();
+    var q=search.value.trim().toLowerCase();
+    if(!q){ openOverview(); return; }
+    clearDim(); setLevel('sub'); setWM('Search');
+    var hits = taskRecs.filter(function(t){ return t.name.toLowerCase().indexOf(q)!==-1 || t.sub.name.toLowerCase().indexOf(q)!==-1; });
+    var set={}; hits.forEach(function(h){ set[h.name+'|'+h.sub.name]=1; });
+    deptRecs.forEach(function(r){ var any=hits.some(function(h){return h.dept===r.dept;}); r.el.classList.toggle('dimmed',!any); r.own.forEach(function(o){ if(!o.classList.contains('task-hit')) o.classList.toggle('dimmed',!any); }); });
+    taskRecs.forEach(function(t){ t.el.classList.toggle('dimmed', !set[t.name+'|'+t.sub.name]); });
+    if (hits.length){ var c=centroid(hits); easeTo(c.x*0.55, c.y*0.55, fitScale()*1.2); }
+    setCrumbs([{label:'All',fn:function(){search.value='';openOverview();}},{label:'"'+q+'"'}]);
+    ins.innerHTML = '<div class="ins-kick">Search</div><h2>'+hits.length+' match'+(hits.length===1?'':'es')+'</h2>'+
+      '<div class="chips">'+hits.slice(0,44).map(function(h,i){ return '<span class="chip" data-i="'+i+'" title="'+esc(h.dept.name)+' › '+esc(h.sub.name)+'">'+esc(h.name)+'</span>'; }).join('')+
+      (hits.length>44?'<span class="chip" style="opacity:.5;cursor:default">+'+(hits.length-44)+' more</span>':'')+'</div>'+
+      '<div class="ins-foot">Clear the box to see the whole map again.</div>';
+    ins.querySelectorAll('.chip[data-i]').forEach(function(c2){ c2.addEventListener('click', function(){ search.value=''; openTask(hits[+c2.dataset.i]); }); });
+  });
+
+  document.getElementById('core').style.cursor='pointer';
+  document.getElementById('core').addEventListener('click', function(e){ e.stopPropagation(); stopAuto(); search.value=''; openOverview(); });
+  svg.addEventListener('click', function(e){ if (e.target===svg || e.target.id==='cam') { stopAuto(); search.value=''; openOverview(); } });
+  window.addEventListener('resize', function(){ if(!autoOn) fitAll(); });
+
+  view.k = fitScale();
+  openOverview();
+  demoBtn.classList.add('paused');
+
+  // start the tour once the map is actually on screen
+  if ('IntersectionObserver' in window && !reduce){
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(en){
+        if (en.isIntersecting && !seen){ startAuto(); io.disconnect(); }
+      });
+    }, {threshold:0.45});
+    io.observe(document.querySelector('.canvas-shell'));
+  }
+})();
+
+/* ---------- sequential reveal (re-triggers on scroll up) ---------- */
+(function(){
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var els = document.querySelectorAll('.rv');
+  if(els.length){
+    if(!('IntersectionObserver' in window) || reduce){
+      els.forEach(function(e){ e.classList.add('in'); });
+    } else {
+      var io = new IntersectionObserver(function(entries){
+        entries.forEach(function(en){
+          if(en.isIntersecting) en.target.classList.add('in');
+          else en.target.classList.remove('in');
+        });
+      }, {threshold:0.15, rootMargin:'0px 0px -50px 0px'});
+      els.forEach(function(e){ io.observe(e); });
+    }
+  }
+
+  /* ---------- chat: bubbles arrive one at a time, replays on scroll up ---------- */
+  var qa = document.querySelector('.qa-b');
+  if(!qa) return;
+  var bubs = [].slice.call(qa.querySelectorAll('.bub'));
+  if(!bubs.length) return;
+
+  if(reduce || !('IntersectionObserver' in window)){
+    bubs.forEach(function(b){ b.classList.add('shown'); });
+    return;
+  }
+
+  var dots = document.createElement('div');
+  dots.className = 'typing';
+  dots.innerHTML = '<i></i><i></i><i></i>';
+  var timers = [], running = false;
+
+  function clearAll(){
+    timers.forEach(clearTimeout); timers = [];
+    if(dots.parentNode) dots.parentNode.removeChild(dots);
+    dots.classList.remove('shown');
+    bubs.forEach(function(b){ b.classList.remove('shown'); });
+    running = false;
+  }
+
+  function play(){
+    if(running) return;
+    running = true;
+    var t = 220;
+    bubs.forEach(function(b, i){
+      var isAnswer = b.classList.contains('a');
+      var pause = i === 0 ? 260 : (isAnswer ? 780 : 1150);
+      t += pause;
+      if(!isAnswer){
+        (function(delay, node){
+          timers.push(setTimeout(function(){
+            node.parentNode.insertBefore(dots, node);
+            dots.classList.add('shown');
+          }, delay - 620));
+        })(t, b);
+      }
+      timers.push(setTimeout(function(){
+        if(dots.parentNode) dots.parentNode.removeChild(dots);
+        dots.classList.remove('shown');
+        b.classList.add('shown');
+      }, t));
+    });
+  }
+
+  var qio = new IntersectionObserver(function(entries){
+    entries.forEach(function(en){
+      if(en.isIntersecting) play();
+      else clearAll();
+    });
+  }, {threshold:0.25});
+  qio.observe(qa);
+})();
+
+/* ---------- dashboard switcher ---------- */
+(function(){
+  var panels = document.querySelectorAll('.dpanel');
+  var dots   = document.querySelectorAll('.dot');
+  var names  = document.querySelectorAll('.dname');
+  if(!panels.length) return;
+
+  function show(i){
+    panels.forEach(function(p){ p.classList.toggle('on', +p.dataset.p === i); });
+    dots.forEach(function(d){ d.classList.toggle('on', +d.dataset.d === i); });
+    names.forEach(function(n){ n.classList.toggle('on', +n.dataset.d === i); });
+  }
+  dots.forEach(function(d){ d.addEventListener('click', function(){ show(+d.dataset.d); }); });
+  names.forEach(function(n){ n.addEventListener('click', function(){ show(+n.dataset.d); }); });
+})();
+</script>
+
+</body>
+</html>
