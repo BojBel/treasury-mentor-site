@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Node Zero · Build Your Own Finance Team</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Cormorant+Garamond:ital,wght@1,500;1,600&family=Inter:wght@400;500;600&display=swap');
 
   :root{
     --teal:#4CABC4; --teal-deep:#2E7E93; --teal-soft:#E7F3F6;
@@ -19,7 +19,7 @@
     -webkit-font-smoothing:antialiased;}
 
   h1,h2,h3,.arch{font-family:'Archivo',sans-serif;}
-  .ital{color:var(--teal);font-style:normal;}
+  .ital{font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:600;}
 
   .wrap{max-width:1240px;margin:0 auto;padding:0 24px;}
   section{padding:104px 0;scroll-margin-top:92px;}
@@ -79,7 +79,7 @@
   svg#nerve{display:block;width:100%;height:100%;}
 
   .ring{fill:none;stroke:#E3E6EA;stroke-width:1;stroke-dasharray:1.5 6;}
-  .wm{font-family:'Archivo',sans-serif;font-weight:800;fill:#0A0A0A;opacity:.05;letter-spacing:.02em;pointer-events:none;transition:opacity .4s ease;}
+  .wm{font-family:'Cormorant Garamond',serif;font-weight:600;fill:#0A0A0A;opacity:.05;letter-spacing:.05em;pointer-events:none;transition:opacity .4s ease;}
 
   .fiber{fill:none;transition:stroke-opacity .4s ease;}
   .fiber-dot{fill:var(--teal);transition:opacity .4s ease;}
@@ -494,6 +494,11 @@
     display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;}
   footer a{color:var(--mute);text-decoration:none;}
   footer a:hover{color:var(--teal);}
+
+  .kit-4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}
+  @media (max-width:980px){ .kit-4{grid-template-columns:repeat(2,1fr);} }
+  @media (max-width:640px){ .kit-4{grid-template-columns:1fr;} }
+  .tagwrap{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px;}
 </style>
 </head>
 <body>
@@ -506,6 +511,7 @@
     <a href="#governance">How it thinks</a>
     <a href="#interview">Your setup</a>
     <a href="#included">What you get</a>
+    <a href="#digital-assets">Digital assets</a>
   </div>
   <a class="nav-cta" href="#waitlist">Join the waitlist</a>
 </nav>
@@ -818,6 +824,65 @@
     <p style="text-align:center;font-size:15px;line-height:1.65;color:var(--body);margin:32px auto 0;max-width:66ch;">
       Every dark block is a judgment call. That was always the real job. The rest was overhead you were carrying because nobody had taken it off you.
     </p>
+  </div>
+</section>
+
+<!-- ============ DIGITAL ASSETS ============ -->
+<section id="digital-assets">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="kick">The newest branch · Treasury</div>
+      <h2>Capturing the future of finance. <span class="ital">Digital assets, built in.</span></h2>
+      <p>Most finance AI libraries stop at the tasks everyone already knows how to do. Node Zero doesn't. Digital assets are already a working branch here, not a slide for later: 14 tasks covering the full lifecycle, from first policy draft to incident response, built the same way as everything else in the library, reading your real rules instead of guessing at them.</p>
+    </div>
+
+    <div class="kit kit-4">
+      <div class="kititem">
+        <div class="top"><span class="q">3</span><span class="u">tasks</span></div>
+        <div class="kn">Policy &amp; strategy</div>
+        <div class="tagwrap">
+          <span class="fchip">Digital Asset Treasury Policy Builder</span>
+          <span class="fchip">Stablecoin Settlement Business Case Builder</span>
+          <span class="fchip">24/7 Settlement Liquidity Policy Designer</span>
+        </div>
+      </div>
+
+      <div class="kititem">
+        <div class="top"><span class="q">3</span><span class="u">tasks</span></div>
+        <div class="kn">Due diligence &amp; custody</div>
+        <div class="tagwrap">
+          <span class="fchip">Stablecoin Issuer and Reserve Due Diligence</span>
+          <span class="fchip">Digital Asset Custodian Selection and Due Diligence</span>
+          <span class="fchip">Tokenized Money Market Fund Eligibility Assessor</span>
+        </div>
+      </div>
+
+      <div class="kititem">
+        <div class="top"><span class="q">4</span><span class="u">tasks</span></div>
+        <div class="kn">Controls &amp; reconciliation</div>
+        <div class="tagwrap">
+          <span class="fchip">On-Chain Payment Control Designer</span>
+          <span class="fchip">Wallet Address Sanctions Screening Procedure</span>
+          <span class="fchip">On-Chain to Subledger to GL Reconciliation Designer</span>
+          <span class="fchip">Tokenized Deposit Evaluator</span>
+        </div>
+      </div>
+
+      <div class="kititem">
+        <div class="top"><span class="q">4</span><span class="u">tasks</span></div>
+        <div class="kn">Risk &amp; readiness</div>
+        <div class="tagwrap">
+          <span class="fchip">Cross-Border Digital Asset Corridor Readiness Screener</span>
+          <span class="fchip">Digital Asset Pilot Designer and Kill-Criteria Manager</span>
+          <span class="fchip">Digital Asset Counterparty and Concentration Risk Assessor</span>
+          <span class="fchip">Digital Asset Incident Response Playbook</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="cov-foot" style="margin-top:32px;">
+      This is the branch that shows up when a treasury team is asked to move first: the policy, the diligence, and the controls are already built and tested against your real approval thresholds and banking setup, not written from scratch under a deadline.
+    </div>
   </div>
 </section>
 
