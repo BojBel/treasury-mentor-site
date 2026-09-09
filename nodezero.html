@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Node Zero · Build Your Own Finance Team</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Cormorant+Garamond:ital,wght@1,500;1,600&family=Inter:wght@400;500;600&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap');
 
   :root{
     --teal:#4CABC4; --teal-deep:#2E7E93; --teal-soft:#E7F3F6;
@@ -19,7 +19,7 @@
     -webkit-font-smoothing:antialiased;}
 
   h1,h2,h3,.arch{font-family:'Archivo',sans-serif;}
-  .ital{font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:600;}
+  .ital{color:var(--teal);font-style:normal;}
 
   .wrap{max-width:1240px;margin:0 auto;padding:0 24px;}
   section{padding:104px 0;scroll-margin-top:92px;}
@@ -79,7 +79,7 @@
   svg#nerve{display:block;width:100%;height:100%;}
 
   .ring{fill:none;stroke:#E3E6EA;stroke-width:1;stroke-dasharray:1.5 6;}
-  .wm{font-family:'Cormorant Garamond',serif;font-weight:600;fill:#0A0A0A;opacity:.05;letter-spacing:.05em;pointer-events:none;transition:opacity .4s ease;}
+  .wm{font-family:'Archivo',sans-serif;font-weight:800;fill:#0A0A0A;opacity:.05;letter-spacing:.02em;pointer-events:none;transition:opacity .4s ease;}
 
   .fiber{fill:none;transition:stroke-opacity .4s ease;}
   .fiber-dot{fill:var(--teal);transition:opacity .4s ease;}
@@ -499,6 +499,19 @@
   @media (max-width:980px){ .kit-4{grid-template-columns:repeat(2,1fr);} }
   @media (max-width:640px){ .kit-4{grid-template-columns:1fr;} }
   .tagwrap{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px;}
+
+  .da-visual{margin:8px auto 44px;max-width:760px;}
+  .da-visual svg{width:100%;height:auto;display:block;overflow:visible;}
+  .dv-line{stroke:var(--line);stroke-width:2;}
+  .dv-node{transform-box:fill-box;transform-origin:center;animation:dvPulse 4.5s ease-in-out infinite;}
+  .dv-node circle{fill:#fff;stroke:var(--teal-deep);stroke-width:2;}
+  .dv-node text{font-family:'Archivo',sans-serif;font-size:12px;font-weight:600;fill:var(--body);text-anchor:middle;}
+  @keyframes dvPulse{
+    0%,84%,100%{transform:scale(1);}
+    4%{transform:scale(1.22);}
+    10%{transform:scale(1);}
+  }
+  .dv-token{fill:var(--teal);filter:drop-shadow(0 0 5px var(--teal));}
 </style>
 </head>
 <body>
@@ -831,9 +844,37 @@
 <section id="digital-assets">
   <div class="wrap">
     <div class="sec-head">
-      <div class="kick">The newest branch · Treasury</div>
+      <div class="kick">The latest branch, inside Treasury</div>
       <h2>Capturing the future of finance. <span class="ital">Digital assets, built in.</span></h2>
-      <p>Most finance AI libraries stop at the tasks everyone already knows how to do. Node Zero doesn't. Digital assets are already a working branch here, not a slide for later: 14 tasks covering the full lifecycle, from first policy draft to incident response, built the same way as everything else in the library, reading your real rules instead of guessing at them.</p>
+    </div>
+
+    <div class="da-visual">
+      <svg viewBox="0 0 800 140" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+        <line class="dv-line" x1="70" y1="60" x2="730" y2="60"/>
+        <g class="dv-node" style="animation-delay:0s">
+          <circle cx="70" cy="60" r="16"/>
+          <text x="70" y="102">Policy</text>
+        </g>
+        <g class="dv-node" style="animation-delay:.9s">
+          <circle cx="235" cy="60" r="16"/>
+          <text x="235" y="102">Custody</text>
+        </g>
+        <g class="dv-node" style="animation-delay:1.8s">
+          <circle cx="400" cy="60" r="16"/>
+          <text x="400" y="102">On-chain</text>
+        </g>
+        <g class="dv-node" style="animation-delay:2.7s">
+          <circle cx="565" cy="60" r="16"/>
+          <text x="565" y="102">Reconciled</text>
+        </g>
+        <g class="dv-node" style="animation-delay:3.6s">
+          <circle cx="730" cy="60" r="16"/>
+          <text x="730" y="102">Reported</text>
+        </g>
+        <circle class="dv-token" r="6">
+          <animateMotion dur="4.5s" repeatCount="indefinite" path="M70,60 L730,60"/>
+        </circle>
+      </svg>
     </div>
 
     <div class="kit kit-4">
@@ -880,9 +921,6 @@
       </div>
     </div>
 
-    <div class="cov-foot" style="margin-top:32px;">
-      This is the branch that shows up when a treasury team is asked to move first: the policy, the diligence, and the controls are already built and tested against your real approval thresholds and banking setup, not written from scratch under a deadline.
-    </div>
   </div>
 </section>
 
