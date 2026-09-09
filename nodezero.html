@@ -512,6 +512,8 @@
     10%{transform:scale(1);}
   }
   .dv-token{fill:var(--teal);filter:drop-shadow(0 0 5px var(--teal));}
+  .dachip{font-family:'Inter',sans-serif;font-weight:500;font-size:12.5px;line-height:1.4;
+    background:var(--wash);border:1px solid var(--line);border-radius:6px;padding:7px 11px;color:var(--teal-deep);}
 </style>
 </head>
 <body>
@@ -524,7 +526,6 @@
     <a href="#governance">How it thinks</a>
     <a href="#interview">Your setup</a>
     <a href="#included">What you get</a>
-    <a href="#digital-assets">Digital assets</a>
   </div>
   <a class="nav-cta" href="#waitlist">Join the waitlist</a>
 </nav>
@@ -846,6 +847,7 @@
     <div class="sec-head">
       <div class="kick">The latest branch, inside Treasury</div>
       <h2>Capturing the future of finance. <span class="ital">Digital assets, built in.</span></h2>
+      <p>Most finance AI libraries stop at the tasks everyone already knows how to do. Node Zero doesn't. Digital assets are already a working branch here, not a slide for later: 14 tasks covering the full lifecycle, from first policy draft to incident response, built the same way as everything else in the library, reading your real rules instead of guessing at them.</p>
     </div>
 
     <div class="da-visual">
@@ -882,9 +884,9 @@
         <div class="top"><span class="q">3</span><span class="u">tasks</span></div>
         <div class="kn">Policy &amp; strategy</div>
         <div class="tagwrap">
-          <span class="fchip">Digital Asset Treasury Policy Builder</span>
-          <span class="fchip">Stablecoin Settlement Business Case Builder</span>
-          <span class="fchip">24/7 Settlement Liquidity Policy Designer</span>
+          <span class="dachip">Digital Asset Treasury Policy Builder</span>
+          <span class="dachip">Stablecoin Settlement Business Case Builder</span>
+          <span class="dachip">24/7 Settlement Liquidity Policy Designer</span>
         </div>
       </div>
 
@@ -892,9 +894,9 @@
         <div class="top"><span class="q">3</span><span class="u">tasks</span></div>
         <div class="kn">Due diligence &amp; custody</div>
         <div class="tagwrap">
-          <span class="fchip">Stablecoin Issuer and Reserve Due Diligence</span>
-          <span class="fchip">Digital Asset Custodian Selection and Due Diligence</span>
-          <span class="fchip">Tokenized Money Market Fund Eligibility Assessor</span>
+          <span class="dachip">Stablecoin Issuer and Reserve Due Diligence</span>
+          <span class="dachip">Digital Asset Custodian Selection and Due Diligence</span>
+          <span class="dachip">Tokenized Money Market Fund Eligibility Assessor</span>
         </div>
       </div>
 
@@ -902,10 +904,10 @@
         <div class="top"><span class="q">4</span><span class="u">tasks</span></div>
         <div class="kn">Controls &amp; reconciliation</div>
         <div class="tagwrap">
-          <span class="fchip">On-Chain Payment Control Designer</span>
-          <span class="fchip">Wallet Address Sanctions Screening Procedure</span>
-          <span class="fchip">On-Chain to Subledger to GL Reconciliation Designer</span>
-          <span class="fchip">Tokenized Deposit Evaluator</span>
+          <span class="dachip">On-Chain Payment Control Designer</span>
+          <span class="dachip">Wallet Address Sanctions Screening Procedure</span>
+          <span class="dachip">On-Chain to Subledger to GL Reconciliation Designer</span>
+          <span class="dachip">Tokenized Deposit Evaluator</span>
         </div>
       </div>
 
@@ -913,10 +915,10 @@
         <div class="top"><span class="q">4</span><span class="u">tasks</span></div>
         <div class="kn">Risk &amp; readiness</div>
         <div class="tagwrap">
-          <span class="fchip">Cross-Border Digital Asset Corridor Readiness Screener</span>
-          <span class="fchip">Digital Asset Pilot Designer and Kill-Criteria Manager</span>
-          <span class="fchip">Digital Asset Counterparty and Concentration Risk Assessor</span>
-          <span class="fchip">Digital Asset Incident Response Playbook</span>
+          <span class="dachip">Cross-Border Digital Asset Corridor Readiness Screener</span>
+          <span class="dachip">Digital Asset Pilot Designer and Kill-Criteria Manager</span>
+          <span class="dachip">Digital Asset Counterparty and Concentration Risk Assessor</span>
+          <span class="dachip">Digital Asset Incident Response Playbook</span>
         </div>
       </div>
     </div>
@@ -1906,6 +1908,22 @@
   }
   dots.forEach(function(d){ d.addEventListener('click', function(){ show(+d.dataset.d); }); });
   names.forEach(function(n){ n.addEventListener('click', function(){ show(+n.dataset.d); }); });
+})();
+
+/* ---------- nav anchor scroll: always align to top, never center ---------- */
+(function(){
+  var NAV_OFFSET = 92;
+  document.querySelectorAll('.nav-links a[href^="#"], .nav-cta[href^="#"]').forEach(function(a){
+    a.addEventListener('click', function(e){
+      var id = a.getAttribute('href').slice(1);
+      var target = document.getElementById(id);
+      if(!target) return;
+      e.preventDefault();
+      var top = target.getBoundingClientRect().top + window.pageYOffset - NAV_OFFSET;
+      window.scrollTo({top: top, behavior: 'smooth'});
+      history.pushState(null, '', '#'+id);
+    });
+  });
 })();
 </script>
 
