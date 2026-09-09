@@ -26,6 +26,10 @@
   .sec-wash{background:var(--wash);}
   .sec-head{text-align:center;max-width:760px;margin:0 auto 56px;}
   .kick{font-size:11.5px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--teal);margin-bottom:16px;}
+  .groupdiv{display:flex;align-items:center;gap:16px;margin:0 0 22px;}
+  .groupdiv:not(:first-child){margin-top:44px;}
+  .groupdiv span{font-size:11.5px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--teal);white-space:nowrap;}
+  .groupdiv:after{content:"";flex:1;height:1px;background:var(--line);}
   h2{font-weight:800;font-size:clamp(28px,4vw,46px);line-height:1.08;letter-spacing:-.03em;margin:0 0 18px;}
   .sec-head p{font-size:16.5px;line-height:1.65;color:var(--body);margin:0;}
   .sec-head p strong{color:var(--ink);font-weight:600;}
@@ -1178,60 +1182,48 @@
       <p>No tiers to decode and no feature grid. One library, one base, one set of guardrails, and a person on the other end of it.</p>
     </div>
 
+    <div class="groupdiv"><span>Day 1</span></div>
     <div class="kit">
 
       <div class="kititem">
-        <div class="top"><span class="q">11</span><span class="u">linked tasks</span></div>
-        <div class="kn">The forecast engine</div>
-        <p class="kd">Weekly P&amp;L, AR/AP/inventory rollforward, 13 and 52 week cash, consolidation, FX, and forward covenant testing. They hand off to each other rather than sitting in a folder.</p>
-      </div>
-
-      <div class="kititem">
-        <div class="top"><span class="q">43</span><span class="u">tasks</span></div>
-        <div class="kn">The deal engine</div>
-        <p class="kd">Target screening, valuation and LBO modeling, synergy work, diligence support, red flag review, IC memo drafting, board material and post-investment review.</p>
-      </div>
-
-      <div class="kititem">
-        <div class="top"><span class="q">18</span><span class="u">tasks</span></div>
-        <div class="kn">The audit engine</div>
-        <p class="kd">Continuous controls monitoring, transaction anomaly detection, SOX testing, deficiency aggregation, remediation tracking and workpaper build.</p>
-      </div>
-
-      <div class="kititem">
-        <div class="top"><span class="q">12</span><span class="u">tasks</span></div>
-        <div class="kn">The close engine</div>
-        <p class="kd">Readiness check, accrual build and trending, JE drafting and support matching, flux detection, root tracing, and the package assembled to your calendar.</p>
-      </div>
-
-      <div class="kititem">
-        <div class="top"><span class="q">13</span><span class="u">tasks</span></div>
-        <div class="kn">The provision engine</div>
-        <p class="kd">Current and deferred provision, ETR build and driver explanation, valuation allowance, uncertain positions, rate reconciliation and the footnote itself.</p>
-      </div>
-
-      <div class="kititem">
-        <div class="top"><span class="q">378</span><span class="u">in total</span></div>
-        <div class="kn">Everything else</div>
-        <p class="kd">Working capital, payments and fraud controls, bank relationships, pricing and margin, planning and budgeting, transfer pricing, investor relations. Eight departments, 60 branches.</p>
+        <div class="top"><span class="q">378</span><span class="u">agents</span></div>
+        <div class="kn">Every agent, on day one</div>
+        <p class="kd">No phased rollout. All 378 agents across 8 departments and 60 branches are active in your workspace as soon as you're in.</p>
       </div>
 
       <div class="kititem">
         <div class="top"><span class="q">17</span><span class="u">context files</span></div>
         <div class="kn">The base underneath it</div>
-        <p class="kd">Built with you through a five module guided intake. Every task reads it before it runs, which is what makes the output yours rather than generic.</p>
+        <p class="kd">Built with you through a five module guided intake. Every agent reads it before it runs, which is what makes the output yours rather than generic.</p>
       </div>
 
       <div class="kititem">
-        <div class="top"><span class="q word">Every task</span></div>
-        <div class="kn">The governance engine</div>
-        <p class="kd">Read the rules first, never assume an input, write the result back. Plus the orchestration map that says what feeds what and where two outputs have to reconcile.</p>
+        <div class="top"><span class="q word">Every agent</span></div>
+        <div class="kn">Governance and data hygiene, by default</div>
+        <p class="kd">Every agent reads the rules first, never assumes an input, and writes the result back. Data hygiene isn't a setting you turn on, it's how the base is built.</p>
+      </div>
+
+    </div>
+
+    <div class="groupdiv"><span>Ongoing</span></div>
+    <div class="kit">
+
+      <div class="kititem">
+        <div class="top"><span class="q word">Monthly</span></div>
+        <div class="kn">A monthly masterclass</div>
+        <p class="kd">A live session on what's actually changing in treasury, tax, and finance AI, and how to use it. A working session, not a webinar funnel.</p>
       </div>
 
       <div class="kititem">
         <div class="top"><span class="q word">Monthly</span></div>
-        <div class="kn">Updates and a direct line to me</div>
-        <p class="kd">New tasks built from real engagements, standards changes tracked, and questions answered by a finance executive rather than a support queue.</p>
+        <div class="kn">New agents, built from real work</div>
+        <p class="kd">New agents added from continuous training on real engagements and real-life workflows, not a fixed catalog that stops growing the day you buy it.</p>
+      </div>
+
+      <div class="kititem">
+        <div class="top"><span class="q word">Direct line</span></div>
+        <div class="kn">A direct line to me</div>
+        <p class="kd">Standards changes tracked, questions answered by a finance executive, not a support queue.</p>
       </div>
 
     </div>
@@ -1302,7 +1294,6 @@
 <section id="waitlist" style="padding-top:30px;">
   <div class="wrap">
     <div class="sec-head">
-      <div class="kick">Not live yet</div>
       <h2>Two ways in, <span class="ital">starting now.</span></h2>
       <p>The Network opens shortly. Until then you can hold a place in the founding group, or have me build and implement it with you directly.</p>
     </div>
