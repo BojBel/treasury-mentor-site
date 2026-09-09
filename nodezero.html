@@ -388,21 +388,21 @@
   /* ---------- two ways in ---------- */
   .ways{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
   .way{border-radius:14px;padding:34px 32px;display:flex;flex-direction:column;}
-  .way.free{background:#fff;border:1px solid var(--line);}
   .way.paid{background:var(--ink);border:1px solid var(--ink);color:#fff;}
+  .way.custom{background:#fff;border:2px solid var(--teal);}
   .way .wk{font-size:10.5px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;margin-bottom:14px;}
-  .way.free .wk{color:var(--teal-deep);} .way.paid .wk{color:var(--teal);}
+  .way.paid .wk{color:var(--teal);} .way.custom .wk{color:var(--teal-deep);}
   .way h3{font-family:'Archivo',sans-serif;font-weight:800;font-size:25px;letter-spacing:-.03em;margin:0 0 12px;line-height:1.12;}
   .way.paid h3{color:#fff;}
   .way > p{font-size:14.5px;line-height:1.65;margin:0 0 20px;}
-  .way.free > p{color:var(--body);} .way.paid > p{color:#B9C0C8;}
+  .way.paid > p{color:#B9C0C8;} .way.custom > p{color:var(--body);}
   .wlist{list-style:none;margin:0 0 26px;padding:0;display:flex;flex-direction:column;gap:9px;flex:1;}
   .wlist li{font-size:13.5px;line-height:1.5;padding-left:22px;position:relative;}
-  .way.free .wlist li{color:var(--body);} .way.paid .wlist li{color:#D4D9DE;}
+  .way.paid .wlist li{color:#D4D9DE;} .way.custom .wlist li{color:var(--body);}
   .wlist li:before{content:"";position:absolute;left:0;top:6px;width:11px;height:7px;
     border-left:2px solid var(--teal);border-bottom:2px solid var(--teal);transform:rotate(-45deg);}
   .wnote{font-size:12px;margin-top:14px;}
-  .way.free .wnote{color:var(--mute);} .way.paid .wnote{color:#8B949E;}
+  .way.paid .wnote{color:#8B949E;} .way.custom .wnote{color:var(--mute);}
   @media (max-width:860px){ .ways{grid-template-columns:1fr;} }
 
   /* ---------- included grid ---------- */
@@ -546,8 +546,8 @@
       <div class="st"><div class="n" id="t-tasks">&nbsp;</div><div class="l">tasks</div></div>
       <div class="st"><div class="n">8</div><div class="l">departments</div></div>
       <div class="st"><div class="n" id="t-branch">&nbsp;</div><div class="l">branches</div></div>
-      <div class="st"><div class="n">25</div><div class="l">context files</div></div>
-      <div class="note">One square below is one task. All of them read the same 25 context files before they run.</div>
+      <div class="st"><div class="n">17</div><div class="l">context files</div></div>
+      <div class="note">One square below is one task. All of them read the same 17 context files before they run.</div>
     </div>
   </header>
 </div>
@@ -1217,7 +1217,7 @@
       </div>
 
       <div class="kititem">
-        <div class="top"><span class="q">25</span><span class="u">context files</span></div>
+        <div class="top"><span class="q">17</span><span class="u">context files</span></div>
         <div class="kn">The base underneath it</div>
         <p class="kd">Built with you through a five module guided intake. Every task reads it before it runs, which is what makes the output yours rather than generic.</p>
       </div>
@@ -1275,7 +1275,7 @@
       <div class="cal-b">
         <div class="cal-col rv d1">
           <div class="cal-item"><b>Run the interview</b><span>Five modules, at your pace</span></div>
-          <div class="cal-item"><b>Node Zero populated</b><span>25 context files, gaps visible</span></div>
+          <div class="cal-item"><b>Node Zero populated</b><span>17 context files, gaps visible</span></div>
           <div class="cal-item soft"><b>Pick three tasks</b><span>Start where the pain is</span></div>
         </div>
         <div class="cal-col rv d2">
@@ -1304,29 +1304,15 @@
     <div class="sec-head">
       <div class="kick">Not live yet</div>
       <h2>Two ways in, <span class="ital">starting now.</span></h2>
-      <p>The Network opens shortly. Until then you can take the foundation and start building against it, or hold a place in the founding group.</p>
+      <p>The Network opens shortly. Until then you can hold a place in the founding group, or have me build and implement it with you directly.</p>
     </div>
 
     <div class="ways">
 
-      <div class="way free rv d1">
-        <div class="wk">Free · available today</div>
-        <h3>The Node Zero Starter Base</h3>
-        <p>The foundation the whole library reads from, given away complete. Fill it in and it works for you whether or not you ever buy anything.</p>
-        <ul class="wlist">
-          <li>All 25 context files, structured and annotated, ready to fill</li>
-          <li>The setup guide that explains what belongs in each one</li>
-          <li>One complete working task: the 13-Week Cash Flow Forecast</li>
-          <li>Runs in your own AI workspace, nothing routed through us</li>
-        </ul>
-        <a class="btn btn-teal" href="mailto:bojan@denarfinancial.com?subject=Node%20Zero%20Starter%20Base" style="align-self:flex-start;">Get the Starter Base</a>
-        <div class="wnote">No card. The base is genuinely useful on its own, which is rather the point.</div>
-      </div>
-
-      <div class="way paid rv d2">
+      <div class="way paid rv d1">
         <div class="wk">Founding 100 · waitlist open</div>
         <h3>The Treasury Mentor Network</h3>
-        <p>Everything above, plus the full library, the guided intake, the governance layer and monthly updates. Pricing is announced at launch.</p>
+        <p>The full library, the guided intake, the governance layer and monthly updates. Pricing is announced at launch.</p>
         <ul class="wlist">
           <li>All 378 tasks across 8 departments and 60 branches</li>
           <li>The five-module guided intake that builds your base with you</li>
@@ -1336,6 +1322,20 @@
         </ul>
         <a class="btn btn-teal" href="mailto:bojan@denarfinancial.com?subject=Node%20Zero%20waitlist" style="align-self:flex-start;">Join the waitlist</a>
         <div class="wnote">Founding places are counted from the waitlist, in order.</div>
+      </div>
+
+      <div class="way custom rv d2">
+        <div class="wk">Done for you · limited slots</div>
+        <h3>Custom Implementation</h3>
+        <p>For teams who want this handled end to end. I audit how your finance function actually runs today, then build the agents and dashboards directly into your own systems, on the same governance guardrails as everything else here.</p>
+        <ul class="wlist">
+          <li>Full audit of how your finance function runs today, before anything gets built</li>
+          <li>Bespoke agents built directly in your stack, not templates adapted after the fact</li>
+          <li>Live dashboards and a command center view built around what you actually track</li>
+          <li>Direct, ongoing access to me as the build evolves</li>
+        </ul>
+        <a class="btn btn-teal" href="mailto:bojan@denarfinancial.com?subject=Node%20Zero%20Strategy%20Call" style="align-self:flex-start;">Book a strategy call</a>
+        <div class="wnote">Best for teams who want full delegation, not a self-serve library.</div>
       </div>
 
     </div>
